@@ -23,12 +23,11 @@ public class SchemaLiner {
 	private static final Logger logger = Logger
 			.getLogger(XpathFromSchema.class);
 
-	private static int numXpaths = 0;
 	private static Stack visitedTypes = new Stack();
 
 	/** provide a simple method to start the dump. */
-	private static void dump(final ElementDecl elementDecl) {
-		dump("", elementDecl);
+	private void walkThroughElTree(final ElementDecl elementDecl) {
+		walkThroughElTree("", elementDecl);
 	}
 
 	/** there may be some situations where the starting xpath is actually
@@ -36,7 +35,7 @@ public class SchemaLiner {
 	 * In either case, allowing an xpath as a parameter provides flexibility
 	 * for unforeseen needs.
 	 */
-	private static void dump(final String xpath, final ElementDecl elementDecl) {
+	private void walkThroughElTree(final String xpath, final ElementDecl elementDecl) {
 		if (elementDecl == null) {
 			return;
 		}
@@ -52,22 +51,20 @@ public class SchemaLiner {
 
 			String newXpath = xpath + "/" + elementDecl.getName();
 
-			System.out.println(numXpaths + ": " + newXpath);
-			numXpaths++;
+			System.out.println(newXpath);
 
 			if (typeReference.isComplexType()) {
 				ComplexType ct = (ComplexType)typeReference;
 				Enumeration attributes = ct.getAttributeDecls();
 				while (attributes.hasMoreElements()) {
 					AttributeDecl attributeDecl = (AttributeDecl)attributes.nextElement();
-					System.out.println(numXpaths + ": " + newXpath + "/@" + attributeDecl.getName());
-					numXpaths++;
+					System.out.println(newXpath + "/@" + attributeDecl.getName());
 				}
 				Enumeration particles = ct.enumerate();
 				while (particles.hasMoreElements()) {
 					Object o = particles.nextElement();
 					if (o instanceof Group) {
-						dumpGroup(newXpath, (Group)o);
+						processGroup(newXpath, (Group)o);
 					} else {
 						System.out.println(" [dump] ***** Unknown particle type: " + o.getClass().getName());
 					}
@@ -83,14 +80,14 @@ public class SchemaLiner {
 	/** I have no idea what a group is, but a little experimentation
 	 * showed the follow method to work.
 	 */
-	public static void dumpGroup(String xpath, final Group group) {
+	public void processGroup(String xpath, final Group group) {
 		Enumeration particles = group.enumerate();
 		while (particles.hasMoreElements()) {
 			Object o = particles.nextElement();
 			if (o instanceof Group) {
-				dumpGroup(xpath, (Group)o);
+				processGroup(xpath, (Group)o);
 			} else if (o instanceof ElementDecl) {
-				dump(xpath, (ElementDecl)o);
+				walkThroughElTree(xpath, (ElementDecl)o);
 			} else {
 				System.out.println("[dumpGroup] ***** Unknown particle type: " + o.getClass().getName());
 			}
@@ -99,6 +96,10 @@ public class SchemaLiner {
 
 	public static void main(String[] args) {
 		File file = new File(args[0]);
+		new SchemaLiner().parseSchemaFile(file);
+	}
+
+	void parseSchemaFile(File file) {
 		try {
 			String systemId = file.toURI().toString();
 			InputSource inputSource = new InputSource(systemId);
@@ -109,9 +110,9 @@ public class SchemaLiner {
 			while( elementDecls.hasMoreElements())
 			{
 				ElementDecl nextElement = (ElementDecl)elementDecls.nextElement();
-				logger.info("main(String[]) - Object nextElement="
-						+ nextElement);
-				dump(nextElement);
+//				logger.info("main(String[]) - Object nextElement="
+//						+ nextElement);
+				walkThroughElTree(nextElement);
 			}
 
 		} catch (Exception e) {
