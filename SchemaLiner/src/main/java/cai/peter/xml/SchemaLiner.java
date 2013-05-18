@@ -1,6 +1,9 @@
 package cai.peter.xml;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -25,17 +28,16 @@ public class SchemaLiner {
 
 	private static Stack visitedTypes = new Stack();
 
+	private File outputFile;
+
+	private BufferedWriter bufferedWriter;
+
 	/** provide a simple method to start the dump. */
 	private void walkThroughElTree(final ElementDecl elementDecl) {
 		walkThroughElTree("", elementDecl);
 	}
 
-	/** there may be some situations where the starting xpath is actually
-	 * a prefix because the starting node can be different from the root node.
-	 * In either case, allowing an xpath as a parameter provides flexibility
-	 * for unforeseen needs.
-	 */
-	private void walkThroughElTree(final String xpath, final ElementDecl elementDecl) {
+	private void walkThroughElTree(final String xpath, final ElementDecl elementDecl){
 		if (elementDecl == null) {
 			return;
 		}
@@ -52,6 +54,7 @@ public class SchemaLiner {
 			String newXpath = xpath + "/" + elementDecl.getName();
 
 			System.out.println(newXpath);
+			writeToFile(newXpath);
 
 			if (typeReference.isComplexType()) {
 				ComplexType ct = (ComplexType)typeReference;
@@ -59,6 +62,7 @@ public class SchemaLiner {
 				while (attributes.hasMoreElements()) {
 					AttributeDecl attributeDecl = (AttributeDecl)attributes.nextElement();
 					System.out.println(newXpath + "/@" + attributeDecl.getName());
+					writeToFile(newXpath + "/@" + attributeDecl.getName());
 				}
 				Enumeration particles = ct.enumerate();
 				while (particles.hasMoreElements()) {
@@ -99,10 +103,25 @@ public class SchemaLiner {
 		new SchemaLiner().parseSchemaFile(file);
 	}
 
-	void parseSchemaFile(File file) {
+	void writeToFile(String line)
+	{
 		try {
-			String systemId = file.toURI().toString();
-			InputSource inputSource = new InputSource(systemId);
+			bufferedWriter.append(line);
+			bufferedWriter.append(System.getProperty("line.separator"));
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	void parseSchemaFile(File inputFile) {
+		try {
+			outputFile = new File(inputFile.toString()+".txt");
+			bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
+
+			String fileURI = inputFile.toURI().toString();
+			InputSource inputSource = new InputSource(fileURI);
 			SchemaReader a = new SchemaReader(inputSource);
 			Schema s = a.read();
 
@@ -110,11 +129,10 @@ public class SchemaLiner {
 			while( elementDecls.hasMoreElements())
 			{
 				ElementDecl nextElement = (ElementDecl)elementDecls.nextElement();
-//				logger.info("main(String[]) - Object nextElement="
-//						+ nextElement);
 				walkThroughElTree(nextElement);
 			}
 
+			bufferedWriter.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
