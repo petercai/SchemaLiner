@@ -41,20 +41,28 @@ public class SchemaLiner {
 		if (elementDecl == null) {
 			return;
 		}
+		String elName = elementDecl.getName();
+		int maxOccurs = elementDecl.getMaxOccurs();
+		int minOccurs = elementDecl.getMinOccurs();
 		List forcedXpaths = new ArrayList();
 		XMLType typeReference = elementDecl.getType();
-
-		if (typeReference.getName() != null && visitedTypes.contains(typeReference.getName())) {
+		String cardinality = ""; // Mandatory
+		if( minOccurs==0 && maxOccurs ==1 ) cardinality = "?"; // optional
+		if( minOccurs==0 && maxOccurs == -1 ) cardinality = "*";
+		if(minOccurs==1 && maxOccurs == -1) cardinality = "+";
+		String name = typeReference.getName();
+		if (name != null && visitedTypes.contains(name)) {
 			// The type is already in the stack, therefore if we were to continue we would infinitely recurse.
 		} else {
-			if (typeReference.getName() != null) {
-				visitedTypes.push(typeReference.getName());
+			if (name != null) {
+				visitedTypes.push(name);
 			}
 
-			String newXpath = xpath + "/" + elementDecl.getName();
+
+			String newXpath = xpath + "/" + elName ;
 
 			System.out.println(newXpath);
-			writeToFile(newXpath);
+			writeToFile(newXpath+cardinality);
 
 			if (typeReference.isComplexType()) {
 				ComplexType ct = (ComplexType)typeReference;
@@ -67,6 +75,7 @@ public class SchemaLiner {
 				Enumeration particles = ct.enumerate();
 				while (particles.hasMoreElements()) {
 					Object o = particles.nextElement();
+					// TODO: bug when there is only a sequence rather than an element
 					if (o instanceof Group) {
 						processGroup(newXpath, (Group)o);
 					} else {
@@ -76,7 +85,7 @@ public class SchemaLiner {
 			}
 		}
 
-		if (typeReference.getName() != null && !visitedTypes.empty()) {
+		if (name != null && !visitedTypes.empty()) {
 			visitedTypes.pop();
 		}
 	}
@@ -125,6 +134,7 @@ public class SchemaLiner {
 			SchemaReader a = new SchemaReader(inputSource);
 			Schema s = a.read();
 
+			// we handle element only
 			Enumeration elementDecls = s.getElementDecls();
 			while( elementDecls.hasMoreElements())
 			{
