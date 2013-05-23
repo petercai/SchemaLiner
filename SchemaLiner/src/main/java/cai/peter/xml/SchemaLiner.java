@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Stack;
@@ -24,7 +25,7 @@ public class SchemaLiner {
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger
-			.getLogger(XpathFromSchema.class);
+			.getLogger(SchemaLiner.class);
 
 	private static Stack visitedTypes = new Stack();
 
@@ -42,6 +43,7 @@ public class SchemaLiner {
 			return;
 		}
 		String elName = elementDecl.getName();
+//		logger.info("walkThroughElTree() - String elName=" + elName);
 		int maxOccurs = elementDecl.getMaxOccurs();
 		int minOccurs = elementDecl.getMinOccurs();
 		List forcedXpaths = new ArrayList();
@@ -50,18 +52,19 @@ public class SchemaLiner {
 		if( minOccurs==0 && maxOccurs ==1 ) cardinality = "?"; // optional
 		if( minOccurs==0 && maxOccurs == -1 ) cardinality = "*";
 		if(minOccurs==1 && maxOccurs == -1) cardinality = "+";
-		String name = typeReference.getName();
-		if (name != null && visitedTypes.contains(name)) {
+		String typeName = typeReference.getName();
+//		logger.info("walkThroughElTree() - String typeName=" + typeName);
+		if (typeName != null && visitedTypes.contains(typeName)) {
 			// The type is already in the stack, therefore if we were to continue we would infinitely recurse.
 		} else {
-			if (name != null) {
-				visitedTypes.push(name);
+			if (typeName != null) {
+				visitedTypes.push(typeName);
 			}
 
 
 			String newXpath = xpath + "/" + elName ;
 
-			System.out.println(newXpath);
+			System.out.println(newXpath+cardinality);
 			writeToFile(newXpath+cardinality);
 
 			if (typeReference.isComplexType()) {
@@ -77,6 +80,11 @@ public class SchemaLiner {
 					Object o = particles.nextElement();
 					// TODO: bug when there is only a sequence rather than an element
 					if (o instanceof Group) {
+						Group group = (Group)o;
+						String name = group.getName();
+						if( name == null )
+							name  = group.getOrder().name();
+//						logger.info("walkThroughElTree() - Object o=" + name);
 						processGroup(newXpath, (Group)o);
 					} else {
 						System.out.println(" [dump] ***** Unknown particle type: " + o.getClass().getName());
@@ -85,7 +93,7 @@ public class SchemaLiner {
 			}
 		}
 
-		if (name != null && !visitedTypes.empty()) {
+		if (typeName != null && !visitedTypes.empty()) {
 			visitedTypes.pop();
 		}
 	}
@@ -93,16 +101,27 @@ public class SchemaLiner {
 	/** I have no idea what a group is, but a little experimentation
 	 * showed the follow method to work.
 	 */
-	public void processGroup(String xpath, final Group group) {
+	public void processGroup(String xpath, final Group group)
+	{
 		Enumeration particles = group.enumerate();
-		while (particles.hasMoreElements()) {
+		while (particles.hasMoreElements())
+		{
+			// TODO: caster cannot handle
 			Object o = particles.nextElement();
-			if (o instanceof Group) {
-				processGroup(xpath, (Group)o);
-			} else if (o instanceof ElementDecl) {
-				walkThroughElTree(xpath, (ElementDecl)o);
-			} else {
-				System.out.println("[dumpGroup] ***** Unknown particle type: " + o.getClass().getName());
+			if (o instanceof Group)
+			{
+//				logger.info("processGroup() - Object o=" + ((Group)o).getName());
+				processGroup(xpath, (Group) o);
+			}
+			else if (o instanceof ElementDecl)
+			{
+//				logger.info("processGroup() - Object o=" + ((ElementDecl)o).getName());
+				walkThroughElTree(xpath, (ElementDecl) o);
+			}
+			else
+			{
+				System.out.println("[dumpGroup] ***** Unknown particle type: " + o.getClass()
+																					.getName());
 			}
 		}
 	}
@@ -119,7 +138,6 @@ public class SchemaLiner {
 			bufferedWriter.append(System.getProperty("line.separator"));
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -135,11 +153,108 @@ public class SchemaLiner {
 			Schema s = a.read();
 
 			// we handle element only
-			Enumeration elementDecls = s.getElementDecls();
-			while( elementDecls.hasMoreElements())
+			Collection<ElementDecl> elementDecls = s.getElementDecls();
+			for( ElementDecl nextElement : elementDecls)
 			{
-				ElementDecl nextElement = (ElementDecl)elementDecls.nextElement();
 				walkThroughElTree(nextElement);
+			}
+
+			bufferedWriter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			System.out.println("Done.");
+		}
+	}
+
+	void parseElements(File inputFile) {
+		try {
+			outputFile = new File(inputFile.toString()+".txt");
+			bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
+
+			String fileURI = inputFile.toURI().toString();
+			InputSource inputSource = new InputSource(fileURI);
+			SchemaReader a = new SchemaReader(inputSource);
+			Schema s = a.read();
+
+			// we handle element only
+			Collection<ElementDecl> elementDecls = s.getElementDecls();
+			for(ElementDecl nextElement : elementDecls)
+			{
+				walkThroughElTree(nextElement);
+			}
+
+			bufferedWriter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			System.out.println("Done.");
+		}
+	}
+
+	void parseServiceRequestHeader(File inputFile) {
+		try {
+			outputFile = new File(inputFile.toString()+".txt");
+			bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
+
+			String fileURI = inputFile.toURI().toString();
+			InputSource inputSource = new InputSource(fileURI);
+			SchemaReader a = new SchemaReader(inputSource);
+			Schema s = a.read();
+
+			// we handle element only
+			ComplexType complexType = s.getComplexType("ServiceRequestHeader");
+			// TODO: castor cannot handle xsd:extension properly
+			// if it's an extension, it need to be handle explicitly
+			Enumeration particles = complexType.enumerate();
+			while( particles.hasMoreElements())
+			{
+				Object o = particles.nextElement();
+				if( o instanceof Group )
+				{
+					Group group = (Group)o;
+					String groupName = group.getName();
+					logger.info("parseComplexType() - String groupName=" + groupName);
+					if( groupName == null )
+						groupName = group.getOrder().name();
+					processGroup("/ServiceRequestHeader", group);
+				}
+			}
+
+			bufferedWriter.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			System.out.println("Done.");
+		}
+	}
+
+	void parseServiceHeader(File inputFile) {
+		try {
+			outputFile = new File(inputFile.toString()+".txt");
+			bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
+
+			String fileURI = inputFile.toURI().toString();
+			InputSource inputSource = new InputSource(fileURI);
+			SchemaReader a = new SchemaReader(inputSource);
+			Schema s = a.read();
+
+			// we handle element only
+			ComplexType complexType = s.getComplexType("ServiceHeader");
+			// sequence can be handled properly
+			Enumeration particles = complexType.enumerate();
+			while( particles.hasMoreElements())
+			{
+				Object o = particles.nextElement();
+				if( o instanceof Group )
+				{
+					Group group = (Group)o;
+					String groupName = group.getName();
+//					logger.info("parseComplexType() - String groupName=" + groupName);
+					if( groupName == null )
+						groupName = group.getOrder().name();
+					processGroup("/ServiceRequestHeader", group);
+				}
 			}
 
 			bufferedWriter.close();
