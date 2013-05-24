@@ -16,6 +16,7 @@ import org.exolab.castor.xml.schema.ComplexType;
 import org.exolab.castor.xml.schema.ElementDecl;
 import org.exolab.castor.xml.schema.Group;
 import org.exolab.castor.xml.schema.Schema;
+import org.exolab.castor.xml.schema.SimpleType;
 import org.exolab.castor.xml.schema.XMLType;
 import org.exolab.castor.xml.schema.reader.SchemaReader;
 import org.xml.sax.InputSource;
@@ -46,7 +47,7 @@ public class SchemaLiner {
 //		logger.info("walkThroughElTree() - String elName=" + elName);
 		int maxOccurs = elementDecl.getMaxOccurs();
 		int minOccurs = elementDecl.getMinOccurs();
-		List forcedXpaths = new ArrayList();
+//		List forcedXpaths = new ArrayList();
 		XMLType typeReference = elementDecl.getType();
 		String cardinality = ""; // Mandatory
 		if( minOccurs==0 && maxOccurs ==1 ) cardinality = "?"; // optional
@@ -68,33 +69,80 @@ public class SchemaLiner {
 			writeToFile(newXpath+cardinality);
 
 			if (typeReference.isComplexType()) {
-				ComplexType ct = (ComplexType)typeReference;
-				Enumeration attributes = ct.getAttributeDecls();
-				while (attributes.hasMoreElements()) {
-					AttributeDecl attributeDecl = (AttributeDecl)attributes.nextElement();
-					System.out.println(newXpath + "/@" + attributeDecl.getName());
-					writeToFile(newXpath + "/@" + attributeDecl.getName());
-				}
-				Enumeration particles = ct.enumerate();
-				while (particles.hasMoreElements()) {
-					Object o = particles.nextElement();
-					// TODO: bug when there is only a sequence rather than an element
-					if (o instanceof Group) {
-						Group group = (Group)o;
-						String name = group.getName();
-						if( name == null )
-							name  = group.getOrder().name();
-//						logger.info("walkThroughElTree() - Object o=" + name);
-						processGroup(newXpath, (Group)o);
-					} else {
-						System.out.println(" [dump] ***** Unknown particle type: " + o.getClass().getName());
-					}
-				}
+				processComplexType(newXpath, (ComplexType)typeReference);
 			}
 		}
 
 		if (typeName != null && !visitedTypes.empty()) {
 			visitedTypes.pop();
+		}
+	}
+
+	private void processComplexType(String newXpath, ComplexType complexType)
+	{
+		String complexTypeName = complexType.getName();
+		logger.info("processComplexType() - String complexTypeName=" + complexTypeName);
+//		newXpath.concat("/" + complexTypeName);
+		/*
+		 * TODO: handle xsd:extension first
+		 */
+//		String derivationMethod = complexType.getDerivationMethod();
+//		if( "extension".equals(derivationMethod))
+		XMLType baseType = complexType.getBaseType();
+
+		if( baseType != null )
+		{
+			/*
+			 * process base type of current complex type
+			 */
+			if( baseType.isComplexType() )
+			{
+				processComplexType(newXpath, (ComplexType)baseType);
+			}
+			else if(baseType.isSimpleType() )
+			{
+				assert false;
+			}
+			else if( baseType.isAnyType() )
+			{
+
+				assert false;
+			}
+			else
+			{
+				assert false;
+
+			}
+		}
+		/*
+		 * then handle attributes
+		 */
+		Enumeration attributes = complexType.getAttributeDecls();
+		while (attributes.hasMoreElements()) {
+			AttributeDecl attributeDecl = (AttributeDecl)attributes.nextElement();
+			System.out.println(newXpath + "/@" + attributeDecl.getName());
+			writeToFile(newXpath + "/@" + attributeDecl.getName());
+		}
+
+		/*
+		 * then handle children
+		 */
+		Enumeration particles = complexType.enumerate();
+		while (particles.hasMoreElements()) {
+			Object o = particles.nextElement();
+			if (o instanceof Group) {
+				/*
+				 * container: sequence, choice or all
+				 */
+				Group container = (Group)o;
+				String name = container.getName();
+				if( name == null )
+					name  = container.getOrder().name();
+//						logger.info("processComplexType() - Group container=" + name);
+				processGroup(newXpath, container);
+			} else {
+				System.out.println(" [dump] ***** Unknown particle type: " + o.getClass().getName());
+			}
 		}
 	}
 
@@ -204,22 +252,7 @@ public class SchemaLiner {
 
 			// we handle element only
 			ComplexType complexType = s.getComplexType("ServiceRequestHeader");
-			// TODO: castor cannot handle xsd:extension properly
-			// if it's an extension, it need to be handle explicitly
-			Enumeration particles = complexType.enumerate();
-			while( particles.hasMoreElements())
-			{
-				Object o = particles.nextElement();
-				if( o instanceof Group )
-				{
-					Group group = (Group)o;
-					String groupName = group.getName();
-					logger.info("parseComplexType() - String groupName=" + groupName);
-					if( groupName == null )
-						groupName = group.getOrder().name();
-					processGroup("/ServiceRequestHeader", group);
-				}
-			}
+			processComplexType("/ServiceRequestHeader", complexType);
 
 			bufferedWriter.close();
 		} catch (Exception e) {
