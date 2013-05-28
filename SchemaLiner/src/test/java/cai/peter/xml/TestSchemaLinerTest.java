@@ -25,7 +25,7 @@ public class TestSchemaLinerTest
 	@Test
 	public void testParseElements()
 	{
-		fail("Not yet implemented");
+		schemaLiner.parseElements(new File("F:\\workspace\\github\\SchemaLiner\\SchemaLiner\\schema\\Services\\External\\ArrangementReportingServiceIntf.xsd"));
 	}
 
 	@Test
