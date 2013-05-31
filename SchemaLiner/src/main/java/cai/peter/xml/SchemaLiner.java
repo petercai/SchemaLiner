@@ -34,15 +34,16 @@ public class SchemaLiner {
 	private BufferedWriter bufferedWriter;
 
 	/** provide a simple method to start the dump. */
-	private void processElTree(final ElementDecl elementDecl) {
-		processElTree("", elementDecl);
+	private void processElement(final ElementDecl elementDecl) {
+		processElement("", elementDecl);
 	}
 
-	private void processElTree(final String xpath, final ElementDecl elementDecl){
+	private void processElement(final String xpath, final ElementDecl elementDecl){
 		if (elementDecl == null) {
 			return;
 		}
 		String elName = elementDecl.getName();
+
 		int maxOccurs = elementDecl.getMaxOccurs();
 		int minOccurs = elementDecl.getMinOccurs();
 		XMLType typeReference = elementDecl.getType();
@@ -50,6 +51,7 @@ public class SchemaLiner {
 		if( minOccurs==0 && maxOccurs ==1 ) cardinality = "?"; // optional
 		if( minOccurs==0 && maxOccurs == -1 ) cardinality = "*";
 		if(minOccurs==1 && maxOccurs == -1) cardinality = "+";
+
 		String typeName = typeReference.getName();
 		if (typeName != null && visitedTypes.contains(typeName)) {
 			// The type is already in the stack, therefore if we were to continue we would infinitely recurse.
@@ -62,7 +64,7 @@ public class SchemaLiner {
 			String newXpath = xpath + "/" + elName ;
 
 			System.out.println(newXpath+cardinality);
-			writeToFile(newXpath+cardinality);
+			serialize(newXpath+cardinality);
 
 			if (typeReference.isComplexType()) {
 				processComplexType(newXpath, (ComplexType)typeReference);
@@ -108,7 +110,7 @@ public class SchemaLiner {
 		while (attributes.hasMoreElements()) {
 			AttributeDecl attributeDecl = (AttributeDecl)attributes.nextElement();
 			System.out.println(newXpath + "/@" + attributeDecl.getName());
-			writeToFile(newXpath + "/@" + attributeDecl.getName());
+			serialize(newXpath + "/@" + attributeDecl.getName());
 		}
 
 		/*
@@ -146,7 +148,7 @@ public class SchemaLiner {
 			}
 			else if (o instanceof ElementDecl)
 			{
-				processElTree(xpath, (ElementDecl) o);
+				processElement(xpath, (ElementDecl) o);
 			}
 			else
 			{
@@ -156,12 +158,57 @@ public class SchemaLiner {
 		}
 	}
 
-	public static void main(String[] args) {
-		File file = new File(args[0]);
-		new SchemaLiner().parseSchemaFile(file);
+	String schemaFile = null;
+	String command = null;
+
+	private Schema	schema;
+
+	public SchemaLiner(String schemaFile, String command)
+	{
+		super();
+		this.schemaFile = schemaFile;
+		this.command = command;
 	}
 
-	void writeToFile(String line)
+	public static void main(String[] args) {
+		new SchemaLiner(args[0],args.length>1?args[1]:null).process();
+	}
+
+	public void process()
+	{
+		try
+		{
+			File file = new File(schemaFile);
+			schema = getSchema(file);
+			if( command == null )
+			{
+				serializeInit(file,"all");
+				processElements(schema);
+				serializeFinal();
+			}
+			else if( "el".equalsIgnoreCase(command))
+			{
+				processElements(schema, true);
+			}
+			else if( "type".equalsIgnoreCase(command))
+			{
+				iterateRootComplexTypes(schema);
+			}
+			else
+			{
+				serializeInit(file, command);
+				processElement(schema.getElementDecl(command));
+				serializeFinal();
+			}
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	void serialize(String line)
 	{
 		try {
 			bufferedWriter.append(line);
@@ -172,39 +219,72 @@ public class SchemaLiner {
 		}
 	}
 
-	void parseSchemaFile(File inputFile) {
-		parseElements(inputFile);
-	}
-
-	private void getWriter(File inputFile) throws IOException
+	private void serializeInit(File inputFile, String postfix)
 	{
-		File outputFile = new File(inputFile.toString()+".txt");
-		bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
+		File outputFile = new File(inputFile.toString()+"."+postfix);
+		try
+		{
+			schema = getSchema(inputFile);
+			bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	void parseElements(File inputFile) {
+	void serializeFinal()
+	{
+		try
+		{
+			bufferedWriter.close();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	void processElements(Schema inputFile)
+	{
+		processElements(inputFile, false);
+	}
+
+	void processElements(Schema schema, boolean rootOnly) {
 		try {
-			getWriter(inputFile);
-
-			Schema s = getSchema(inputFile);
-
 			// we handle element only
-			Collection<ElementDecl> elementDecls = s.getElementDecls();
-			for(ElementDecl nextElement : elementDecls)
+			Collection<ElementDecl> elementDecls = schema.getElementDecls();
+			for(ElementDecl xElement : elementDecls)
 			{
-				processElTree(nextElement);
+				if( rootOnly)
+				{
+					String elementName = xElement.getName();
+					System.out.println(elementName);
+				}
+				else
+					processElement(xElement);
 			}
 
-			bufferedWriter.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 		}
 	}
 
+	void iterateRootComplexTypes(Schema schema)
+	{
+		for (ComplexType type : schema.getComplexTypes())
+		{
+			String typeName = type.getName();
+			System.out.println(typeName);
+		}
+	}
+
 	void parseServiceRequestHeader(File inputFile) {
 		try {
-			getWriter(inputFile);
+			serializeInit(inputFile,"ServiceRequestHeader");
 
 			Schema s = getSchema(inputFile);
 
@@ -222,7 +302,7 @@ public class SchemaLiner {
 
 	void parseServiceHeader(File inputFile) {
 		try {
-			getWriter(inputFile);
+			serializeInit(inputFile,"ServiceHeader");
 
 			Schema s = getSchema(inputFile);
 
