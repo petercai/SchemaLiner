@@ -158,16 +158,23 @@ public class SchemaLiner {
 		}
 	}
 
-	String schemaFile = null;
+	String filename = null;
 	String command = null;
+	File schemaFile = null;
 
 	private Schema	schema;
 
-	public SchemaLiner(String schemaFile, String command)
+	public SchemaLiner(String filename, String command)
 	{
 		super();
-		this.schemaFile = schemaFile;
+		this.filename = filename;
 		this.command = command;
+	}
+
+	public SchemaLiner(File filename)
+	{
+		super();
+		this.schemaFile = filename;
 	}
 
 	public static void main(String[] args) {
@@ -178,11 +185,13 @@ public class SchemaLiner {
 	{
 		try
 		{
-			File file = new File(schemaFile);
-			schema = getSchema(file);
+			if( schemaFile == null )
+				schemaFile = new File(filename);
+
+			schema = getSchema(schemaFile);
 			if( command == null )
 			{
-				serializeInit(file,"all");
+				serializeInit(schemaFile,"all");
 				processElements(schema);
 				serializeFinal();
 			}
@@ -196,7 +205,7 @@ public class SchemaLiner {
 			}
 			else
 			{
-				serializeInit(file, command);
+				serializeInit(schemaFile, command);
 				processElement(schema.getElementDecl(command));
 				serializeFinal();
 			}
