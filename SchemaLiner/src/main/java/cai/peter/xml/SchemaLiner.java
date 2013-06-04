@@ -4,29 +4,20 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.exolab.castor.xml.schema.AttributeDecl;
 import org.exolab.castor.xml.schema.ComplexType;
 import org.exolab.castor.xml.schema.ElementDecl;
 import org.exolab.castor.xml.schema.Group;
 import org.exolab.castor.xml.schema.Schema;
-import org.exolab.castor.xml.schema.SimpleType;
 import org.exolab.castor.xml.schema.XMLType;
 import org.exolab.castor.xml.schema.reader.SchemaReader;
 import org.xml.sax.InputSource;
 
 public class SchemaLiner {
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = Logger
-			.getLogger(SchemaLiner.class);
 
 	private static Stack visitedTypes = new Stack();
 
