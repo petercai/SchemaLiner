@@ -17,7 +17,7 @@ import org.exolab.castor.xml.schema.XMLType;
 import org.exolab.castor.xml.schema.reader.SchemaReader;
 import org.xml.sax.InputSource;
 
-public class SchemaLiner {
+public class SchemaDistiller {
 
 	private static Stack visitedTypes = new Stack();
 
@@ -155,21 +155,21 @@ public class SchemaLiner {
 
 	private Schema	schema;
 
-	public SchemaLiner(String filename, String command)
+	public SchemaDistiller(String filename, String command)
 	{
 		super();
 		this.filename = filename;
 		this.command = command;
 	}
 
-	public SchemaLiner(File filename)
+	public SchemaDistiller(File filename)
 	{
 		super();
 		this.schemaFile = filename;
 	}
 
 	public static void main(String[] args) {
-		new SchemaLiner(args[0],args.length>1?args[1]:null).process();
+		new SchemaDistiller(args[0],args.length>1?args[1]:null).process();
 	}
 
 	public void process()

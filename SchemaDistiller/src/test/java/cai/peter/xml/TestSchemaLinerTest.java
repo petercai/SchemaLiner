@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class TestSchemaLinerTest
 {
-	private SchemaLiner	schemaLiner;
+	private SchemaDistiller	schemaLiner;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception
@@ -19,7 +19,7 @@ public class TestSchemaLinerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		schemaLiner = new SchemaLiner();
+		schemaLiner = new SchemaDistiller();
 	}
 
 	@Test
