@@ -1,7 +1,5 @@
 package cai.peter.xml;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 
 import org.junit.Before;
@@ -10,7 +8,7 @@ import org.junit.Test;
 
 public class TestSchemaLinerTest
 {
-	private SchemaDistiller	schemaLiner;
+	private SchemaDistiller	distiller;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception
@@ -19,23 +17,25 @@ public class TestSchemaLinerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		schemaLiner = new SchemaDistiller();
 	}
 
 	@Test
 	public void testParseElements()
 	{
-		schemaLiner.processElements(new File("F:\\workspace\\github\\SchemaLiner\\SchemaLiner\\schema\\Services\\External\\ArrangementReportingServiceIntf.xsd"));
+		distiller =  new SchemaDistiller(new File("F:\\workspace\\github\\SchemaLiner\\SchemaDistiller\\schema\\Services\\External\\ArrangementReportingServiceIntf.xsd"));
+		distiller.process();
 	}
 
 	@Test
 	public void testParseServiceRequestHeaderType()
 	{
-		schemaLiner.parseServiceRequestHeader(new File("F:\\workspace\\github\\SchemaLiner\\SchemaLiner\\schema\\CDM\\ServiceHeader_V2_2.xsd"));
+		distiller=  new SchemaDistiller(new File("F:\\workspace\\github\\SchemaLiner\\SchemaDistiller\\schema\\CDM\\ServiceHeader_V2_2.xsd"));
+		distiller.parseServiceRequestHeader(null);
 	}
 	@Test
 	public void testParseServiceHeaderType()
 	{
-		schemaLiner.parseServiceHeader(new File("F:\\workspace\\github\\SchemaLiner\\SchemaLiner\\schema\\CDM\\ServiceHeader_V2_2.xsd"));
+		distiller=  new SchemaDistiller(new File("F:\\workspace\\github\\SchemaLiner\\SchemaDistiller\\schema\\CDM\\ServiceHeader_V2_2.xsd"));
+		distiller.parseServiceHeader(null);
 	}
 }
