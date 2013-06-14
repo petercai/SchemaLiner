@@ -44,27 +44,47 @@ public class SchemaDistiller {
 		if(minOccurs==1 && maxOccurs == -1) cardinality = "+";
 
 		String typeName = typeReference.getName();
-		if (typeName != null && visitedTypes.contains(typeName)) {
-			// The type is already in the stack, therefore if we were to continue we would infinitely recurse.
-		} else {
-			if (typeName != null) {
+		if (typeName != null && visitedTypes.contains(typeName))
+		{
+			// The type is already in the stack, therefore if we were to
+			// continue we would infinitely recurse.
+		}
+		else
+		{
+			if (typeName != null)
+			{
 				visitedTypes.push(typeName);
 			}
+			String newXpath = xpath + "/"
+					+ elName;
+			if (typeReference.isComplexType())
+			{
+				System.out.println(newXpath + cardinality);
+				serialize(newXpath + cardinality);
+				processComplexType(newXpath, (ComplexType) typeReference);
+			}
+			else
+			{
+				String primitiveTypeName = getPrimitiveTypeName(typeReference);
+				System.out.println(newXpath + cardinality + ":" + primitiveTypeName);
+				serialize(newXpath + cardinality + ":" + primitiveTypeName);
 
-
-			String newXpath = xpath + "/" + elName ;
-
-			System.out.println(newXpath+cardinality);
-			serialize(newXpath+cardinality);
-
-			if (typeReference.isComplexType()) {
-				processComplexType(newXpath, (ComplexType)typeReference);
 			}
 		}
 
 		if (typeName != null && !visitedTypes.empty()) {
 			visitedTypes.pop();
 		}
+	}
+
+	String getPrimitiveTypeName(XMLType xmlType)
+	{
+		String derivationMethod = xmlType.getDerivationMethod();
+		XMLType baseType = xmlType.getBaseType();
+		if( derivationMethod !=null && baseType != null )
+			return getPrimitiveTypeName(baseType);
+		else
+			return xmlType.getName();
 	}
 
 	private void processComplexType(String newXpath, ComplexType complexType)

@@ -27,6 +27,13 @@ public class TestSchemaLinerTest
 	}
 
 	@Test
+	public void testParseOneElement()
+	{
+		distiller =  new SchemaDistiller(("F:\\workspace\\github\\SchemaLiner\\SchemaDistiller\\schema\\Services\\External\\ArrangementReportingServiceIntf.xsd"), "getBalancesResponse");
+		distiller.process();
+	}
+
+	@Test
 	public void testParseServiceRequestHeaderType()
 	{
 		distiller=  new SchemaDistiller(new File("F:\\workspace\\github\\SchemaLiner\\SchemaDistiller\\schema\\CDM\\ServiceHeader_V2_2.xsd"));
