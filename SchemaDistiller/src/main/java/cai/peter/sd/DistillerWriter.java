@@ -18,6 +18,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.exolab.castor.xml.schema.Schema;
 
@@ -90,15 +91,15 @@ public class DistillerWriter
 		File outputFile = null;
 		try
 		{
-			switch( option )
+			switch(Launcher.argsMap.get( option) )
 			{
-			case "/a":
+			case ALL:
 				outputFile = new File(xsdFile.toString()+".all");
 				node = root;
 				break;
-			case "/e":
+			case ELEMENT:
 				break;
-			case "/t":
+			case SHOW_TYPE:
 				break;
 			default:
 				outputFile = new File(xsdFile.toString()+"."+option);

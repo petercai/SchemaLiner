@@ -15,6 +15,8 @@
 package cai.peter.schema;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -52,27 +54,24 @@ public class XGroup
 		if(items.size()>1)
 		{
 			StringBuilder s = new StringBuilder();
-			switch( order )
+			@SuppressWarnings("serial")
+			HashMap<String, Integer> orderMap = new HashMap<String, Integer>(2){{
+				put("choice",1);
+				put("all",2);
+			}};
+			switch(orderMap.get( order ))
 			{
-			case "choice":
+			case 1:
 				s.append(path);
 				s.append("(");
-				for(String item : items)
-				{
-					s.append(item);
-					s.append("|");
-				}
+				s.append(Arrays.toString(items.toArray()).replaceAll(",", "|"));
 				s.append(")");
 				result = s.toString();
 				break;
-			case "all":
+			case 2:
 				s.append(path);
 				s.append("<");
-				for(String item : items)
-				{
-					s.append(item);
-					s.append("|");
-				}
+				s.append(Arrays.toString(items.toArray()).replaceAll(",", "|"));
 				s.append(">");
 				result = s.toString();
 				break;

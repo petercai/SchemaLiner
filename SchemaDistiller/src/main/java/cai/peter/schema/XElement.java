@@ -47,21 +47,11 @@ public class XElement extends XNode
 		s.append(name);
 		s.append(cardinality);
 		s.append((type.isEmpty()?"":(":"+type)));
-		switch(type)
-		{
-		case "string":
-			if( range[0]!=null || range[1] != null)
-				s.append(MessageFormat.format(	"[{0},{1}]",
-			                              	(range[0]==null?"-":range[0]),
-			                              	(range[1]==null?"-":range[1])));
-			break;
-		case "decimal":
-			if( range[0]!=null || range[1] != null)
-				s.append(MessageFormat.format(	"[{0}.{1}]",
-				                              	(range[0]==null?"-":range[0]),
-				                              	(range[1]==null?"-":range[1])));
-			break;
-		}
+		if( range[0]!=null || range[1] != null)
+			s.append(MessageFormat.format(	"[{0}.{1}]",
+			                              	(range[0]==null?".":range[0]),
+			                              	(range[1]==null?".":range[1])));
+
 		return s.toString();
 	}
 }

@@ -67,18 +67,24 @@ public class Distiller {
 		while( facets.hasMoreElements())
 		{
 			Facet facet = facets.nextElement();
-			switch( facet.getName())
+			HashMap<String, Integer> option = new HashMap<String, Integer>(4){{
+				put("maxLength",1);
+				put("minLength",2);
+				put("totalDigits",3);
+				put("fractionDigits",4);
+			}};
+			switch( option.get( facet.getName()))
 			{
-			case "maxLength":
+			case 1:
 				el.range[1] = facet.getValue();
 				break;
-			case "minLength":
+			case 2:
 				el.range[0] = facet.getValue();
 				break;
-			case "totalDigits":
+			case 3:
 				el.range[0] = facet.getValue();
 				break;
-			case "fractionDigits":
+			case 4:
 				el.range[1] = facet.getValue();
 				break;
 			}

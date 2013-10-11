@@ -15,6 +15,7 @@
 package cai.peter.sd;
 
 import java.io.File;
+import java.util.HashMap;
 
 import cai.peter.schema.CastorUtil;
 
@@ -24,15 +25,25 @@ import cai.peter.schema.CastorUtil;
  */
 public class Launcher
 {
+	@SuppressWarnings("serial")
+	public static HashMap<String, Option> argsMap = new HashMap<String, Option>(){{
+		put("/a", Option.ALL);
+		put("/e",Option.ELEMENT);
+		put("/t",Option.TYPE);
+		put("/st",Option.SHOW_TYPE);
+		put("/sc",Option.SHOW_CARDI);
+		put("/sr",Option.SHOW_RANGE);
+	}};
+
 	public static void main(String[] args) throws Exception
 	{
 
 		String filename = args[0];
 		String command = args.length > 1 ? args[1]: "/a";
 		DistillerWriter distillerWriter = new DistillerWriter(command);
-		switch(command)
+		switch(argsMap.get(command))
 		{
-		case "/e":
+		case ELEMENT:
 			for(String el : CastorUtil.getRootElements(CastorUtil.getSchema(new File(filename))))
 			{
 				System.out.println(el);
