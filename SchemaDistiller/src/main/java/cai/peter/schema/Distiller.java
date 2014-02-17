@@ -36,7 +36,7 @@ public class Distiller {
 		if (typeReference.isComplexType())
 		{
 			result.setParent(parent);
-			System.out.println(result.toString());
+//			System.out.println(result.toString());
 			processComplexType(	result,
 								(ComplexType) typeReference);
 		}
@@ -55,7 +55,7 @@ public class Distiller {
 
 			// discard old node
 			result = el;
-			System.out.println(el.toString());
+//			System.out.println(el.toString());
 		}
 
 		return result;
@@ -67,24 +67,19 @@ public class Distiller {
 		while( facets.hasMoreElements())
 		{
 			Facet facet = facets.nextElement();
-			HashMap<String, Integer> option = new HashMap<String, Integer>(4){{
-				put("maxLength",1);
-				put("minLength",2);
-				put("totalDigits",3);
-				put("fractionDigits",4);
-			}};
-			switch( option.get( facet.getName()))
+
+			switch( ( facet.getName()))
 			{
-			case 1:
+			case "maxLength":
 				el.range[1] = facet.getValue();
 				break;
-			case 2:
+			case "minLength":
 				el.range[0] = facet.getValue();
 				break;
-			case 3:
+			case "totalDigits":
 				el.range[0] = facet.getValue();
 				break;
-			case 4:
+			case "fractionDigits":
 				el.range[1] = facet.getValue();
 				break;
 			}
@@ -113,9 +108,7 @@ public class Distiller {
 				throw new Exception("Unsupported feature/type: "+baseType.getClass().getName());
 			}
 		}
-		/*
-		 * process attributes
-		 */
+
 		processTypeAttributes(parent, complexType);
 
 		/*
@@ -128,9 +121,6 @@ public class Distiller {
 			if (o instanceof Group)
 			{
 				Group container = (Group) o;
-//				XGroup xg = new XGroup(container.getOrder().name());
-//				// add group to element
-//				parent.groups.add(xg);
 				processGroup(	parent,
 								container);
 
@@ -149,7 +139,7 @@ public class Distiller {
 			AttributeDecl attributeDecl = (AttributeDecl)attributes.nextElement();
 			XAttribute attribute = new XAttribute(attributeDecl.getName());
 			node.addAttribute(attribute);
-			System.out.println(node.getPath() + "/@" + attribute.name);
+//			System.out.println(node.getPath() + "/@" + attribute.name);
 		}
 	}
 
@@ -204,9 +194,10 @@ public class Distiller {
 		return result;
 	}
 
-	public Map<String, XNode> elements = new HashMap<String, XNode>();
+	private Map<String, XNode> elements = new HashMap<String, XNode>();
+	private Map<String, XNode> complexTypes = new HashMap<String, XNode>();
 
-	public XNode processAll(Schema schema) throws Exception
+	public XNode processAllElement(Schema schema) throws Exception
 	{
 		XNode root = new XNode("");
 		Collection<ElementDecl> elementDecls = schema.getElementDecls();
@@ -216,5 +207,14 @@ public class Distiller {
 		}
 
 		return root;
+	}
+
+	public Map<String, XNode> getElements()
+	{
+		return elements;
+	}
+	public XNode getElement(String name)
+	{
+		return elements.get(name);
 	}
 }

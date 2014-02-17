@@ -15,7 +15,6 @@
 package cai.peter.sd;
 
 import java.io.File;
-import java.util.HashMap;
 
 import cai.peter.schema.CastorUtil;
 
@@ -25,15 +24,15 @@ import cai.peter.schema.CastorUtil;
  */
 public class Launcher
 {
-	@SuppressWarnings("serial")
-	public static HashMap<String, Option> argsMap = new HashMap<String, Option>(){{
-		put("/a", Option.ALL);
-		put("/e",Option.ELEMENT);
-		put("/t",Option.TYPE);
-		put("/st",Option.SHOW_TYPE);
-		put("/sc",Option.SHOW_CARDI);
-		put("/sr",Option.SHOW_RANGE);
-	}};
+//	@SuppressWarnings("serial")
+//	public static HashMap<String, Option> argsMap = new HashMap<String, Option>(){{
+//		put("/a", Option.ALL);
+//		put("/e",Option.ELEMENT);
+//		put("/t",Option.TYPE);
+//		put("/st",Option.SHOW_TYPE);
+//		put("/sc",Option.SHOW_CARDI);
+//		put("/sr",Option.SHOW_RANGE);
+//	}};
 
 	public static void main(String[] args) throws Exception
 	{
@@ -41,15 +40,17 @@ public class Launcher
 		String filename = args[0];
 		String command = args.length > 1 ? args[1]: "/a";
 		DistillerWriter distillerWriter = new DistillerWriter(command);
-		switch(argsMap.get(command))
+		distillerWriter.setOption(command);
+		switch((command))
 		{
-		case ELEMENT:
+		case "/le": // list all element in console
 			for(String el : CastorUtil.getRootElements(CastorUtil.getSchema(new File(filename))))
 			{
 				System.out.println(el);
 			}
 			break;
-		default:
+		case "/lt": // list all comple types in console
+		case "/a":
 			distillerWriter.transform(new File(filename));
 			break;
 		}

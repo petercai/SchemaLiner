@@ -18,7 +18,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.exolab.castor.xml.schema.Schema;
 
@@ -35,8 +34,7 @@ public class DistillerWriter
 {
 	private BufferedWriter bufferedWriter = null;
 
-
-	String option;
+	private String option;
 
 	public DistillerWriter(String option)
 	{
@@ -86,24 +84,24 @@ public class DistillerWriter
 	{
 		Schema schema = CastorUtil.getSchema(xsdFile);
 		Distiller distiller = new Distiller();
-		XNode root = distiller.processAll(schema), node=null;
+		XNode root = distiller.processAllElement(schema), node=null;
 
 		File outputFile = null;
 		try
 		{
-			switch(Launcher.argsMap.get( option) )
+			switch(( option) )
 			{
-			case ALL:
+			case "/a":
 				outputFile = new File(xsdFile.toString()+".all");
 				node = root;
 				break;
-			case ELEMENT:
+			case "/e":
 				break;
-			case SHOW_TYPE:
+			case "/st":
 				break;
 			default:
 				outputFile = new File(xsdFile.toString()+"."+option);
-				node = distiller.elements.get(option);
+				node = distiller.getElement(option);
 				break;
 			}
 			if( node != null )
@@ -118,5 +116,12 @@ public class DistillerWriter
 				bufferedWriter.close();
 		}
 
+	}
+
+
+
+	public void setOption(String option)
+	{
+		this.option = option;
 	}
 }
