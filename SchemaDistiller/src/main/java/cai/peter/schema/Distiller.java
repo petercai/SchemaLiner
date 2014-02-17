@@ -1,5 +1,7 @@
 package cai.peter.schema;
 
+import org.apache.log4j.Logger;
+
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -17,6 +19,10 @@ import org.exolab.castor.xml.schema.Wildcard;
 import org.exolab.castor.xml.schema.XMLType;
 
 public class Distiller {
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger	logger	= Logger.getLogger(Distiller.class);
 
 
 	/**
@@ -203,9 +209,24 @@ public class Distiller {
 		Collection<ElementDecl> elementDecls = schema.getElementDecls();
 		for (ElementDecl xElement : elementDecls)
 		{
-			elements.put(xElement.getName(), processElement(root, xElement));
+			String elementName = xElement.getName();
+			logger.info("element: "+elementName);
+			elements.put(elementName, processElement(root, xElement));
 		}
 
+		return root;
+	}
+	public XNode processAllComplexTypes(Schema schema) throws Exception
+	{
+		XNode root = new XNode("");
+		Collection<ComplexType> types = schema.getComplexTypes();
+		for (ComplexType xElement : types)
+		{
+			String elementName = xElement.getName();
+			logger.info("ComplexType: "+elementName);
+//			elements.put(elementName, processElement(root, xElement));
+		}
+		
 		return root;
 	}
 

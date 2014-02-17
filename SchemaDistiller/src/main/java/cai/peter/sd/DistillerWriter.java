@@ -93,9 +93,11 @@ public class DistillerWriter
 			{
 			case "/a":
 				outputFile = new File(xsdFile.toString()+".all");
-				node = root;
+				bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
+				write(root);
 				break;
 			case "/e":
+				for( XNode node : root)
 				break;
 			case "/st":
 				break;
@@ -104,11 +106,7 @@ public class DistillerWriter
 				node = distiller.getElement(option);
 				break;
 			}
-			if( node != null )
-			{
-				bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
-				write(node);
-			}
+			
 		}
 		finally
 		{

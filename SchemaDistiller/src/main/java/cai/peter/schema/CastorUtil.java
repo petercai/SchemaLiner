@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.exolab.castor.xml.schema.ComplexType;
 import org.exolab.castor.xml.schema.ElementDecl;
 import org.exolab.castor.xml.schema.Schema;
 import org.exolab.castor.xml.schema.XMLType;
@@ -42,6 +43,18 @@ public class CastorUtil
 		{
 			{
 				result.add(xElement.getName());
+			}
+		}
+		return result;
+	}
+	public static List<String> getComplexTypes(Schema schema)
+	{
+		List<String> result = new ArrayList<String>();
+		Collection<ComplexType> complexTypes = schema.getComplexTypes();
+		for (ComplexType complexType : complexTypes)
+		{
+			{
+				result.add(complexType.getName());
 			}
 		}
 		return result;

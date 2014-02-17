@@ -14,6 +14,8 @@
 
 package cai.peter.sd;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 
 import cai.peter.schema.CastorUtil;
@@ -24,6 +26,11 @@ import cai.peter.schema.CastorUtil;
  */
 public class Launcher
 {
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger	logger	= Logger.getLogger(Launcher.class);
+
 //	@SuppressWarnings("serial")
 //	public static HashMap<String, Option> argsMap = new HashMap<String, Option>(){{
 //		put("/a", Option.ALL);
@@ -46,12 +53,19 @@ public class Launcher
 		case "/le": // list all element in console
 			for(String el : CastorUtil.getRootElements(CastorUtil.getSchema(new File(filename))))
 			{
-				System.out.println(el);
+				logger.fatal(el);
 			}
 			break;
 		case "/lt": // list all comple types in console
-		case "/a":
+			for(String el : CastorUtil.getComplexTypes(CastorUtil.getSchema(new File(filename))))
+			{
+				logger.fatal(el);
+			}
+			break;
+		case "/a": // all elements in one file
 			distillerWriter.transform(new File(filename));
+			break;
+		case "/e":
 			break;
 		}
 	}
