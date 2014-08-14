@@ -1,3 +1,7 @@
+/***********************************************
+ * Copyright (c) 2013 Peter Cai                *
+ * All rights reserved.                        *
+ ***********************************************/
 package cai.peter.schema.distiller;
 
 import java.util.ArrayList;

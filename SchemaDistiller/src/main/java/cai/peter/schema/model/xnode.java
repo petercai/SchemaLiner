@@ -1,13 +1,7 @@
-/*******************************************************************************
- * Copyright (c) 2010 Peter Cai
- * All rights reserved.
- *
- * ***************************************************************
- * Filename:    XNode.java
- * Description: SchemaDistiller
- * Created by:  Peter Cai
- * Created on:  Aug 21, 2013
- ******************************************************************************/
+/***********************************************
+ * Copyright (c) 2013 Peter Cai                *
+ * All rights reserved.                        *
+ ***********************************************/
 package cai.peter.schema.model;
 
 import java.util.ArrayList;

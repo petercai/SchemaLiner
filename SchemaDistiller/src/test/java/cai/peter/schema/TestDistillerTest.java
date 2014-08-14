@@ -1,15 +1,8 @@
 /***********************************************
- * Copyright (c) 1995-2014 Peter Cai 
- * All rights reserved.
- * 
- * ***************************************************************
- * @Project: 	SchemaDistiller
- * @Filename: 	TestDistillerTest.java
- * @Author:		Peter Cai
- * 
- * @Date: 	Feb 16, 2014
- *
- */
+ * Copyright (c) 2013 Peter Cai                *
+ * All rights reserved.                        *
+ ***********************************************/
+
 package cai.peter.schema;
 
 import java.io.File;
@@ -39,8 +32,7 @@ public class TestDistillerTest
 	@Before
 	public void init() throws IOException, URISyntaxException
 	{
-		URL resource = ClassLoader.getSystemResource(file);
-//		URL resource = this.getClass().getClassLoader().getResource(file);
+		URL resource = this.getClass().getClassLoader().getResource(file);
 		URI uri = resource.toURI();
 		schema = CastorUtil.getSchema(new File(uri));
 		dt = new distiller();

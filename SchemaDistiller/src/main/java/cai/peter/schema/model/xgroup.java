@@ -1,27 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2010 Peter Cai
- * All rights reserved.
- *
- * ***************************************************************
- * Filename:    XGroup.java
- * Description: SchemaDistiller
- * Created by:  Peter Cai
- * Created on:  Aug 28, 2013
- ******************************************************************************/
-
-
-
-
+/***********************************************
+ * Copyright (c) 2013 Peter Cai                *
+ * All rights reserved.                        *
+ ***********************************************/
 package cai.peter.schema.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Peter Cai
- *
- */
 public class xgroup
 {
 	protected String path;
