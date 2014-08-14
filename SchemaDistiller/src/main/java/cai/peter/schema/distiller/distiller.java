@@ -118,7 +118,7 @@ public class distiller {
 		processTypeAttributes(node, complexType);
 
 		/*
-		 * process children
+		 * particles are groups
 		 */
 		Enumeration<?> particles = complexType.enumerate();
 		while (particles.hasMoreElements())
@@ -128,14 +128,14 @@ public class distiller {
 			{
 				processGroup(node,(Group) particle);
 			}
-			else if( particle instanceof Wildcard)
-			{
-				logger.error("processComplexType() - Unexpected partical: Wildcard");
-			}
-			else if( particle instanceof ElementDecl)
-			{
-				logger.error("processComplexType() - Unexpected partical: ElementDecl.name="+((ElementDecl)particle).getName());
-			}
+//			else if( particle instanceof Wildcard)
+//			{
+//				logger.error("processComplexType() - Unexpected partical: Wildcard");
+//			}
+//			else if( particle instanceof ElementDecl)
+//			{
+//				logger.error("processComplexType() - Unexpected partical: ElementDecl.name="+((ElementDecl)particle).getName());
+//			}
 			else
 			{
 				throw new Exception("Unknown particle type: " + particle.getClass().getName());
@@ -163,7 +163,7 @@ public class distiller {
 	private xgroup processGroup(xnode container, final Group group) throws Exception
 	{
 		xgroup result = new xgroup(group.getOrder().name());
-		result.setPath(container.getPath());
+//		result.setPath(container.getPath());
 		container.addGroup(result);
 
 		Enumeration<Annotated> particles = group.enumerate();
@@ -206,8 +206,6 @@ public class distiller {
 		return result;
 	}
 
-//	private Map<String, xnode> elements = new HashMap<String, xnode>();
-//	private Map<String, xnode> complexTypes = new HashMap<String, xnode>();
 
 	public List<xnode> processElements(Schema schema) throws Exception
 	{
@@ -234,12 +232,5 @@ public class distiller {
 		return result;
 	}
 
-//	public Map<String, xnode> getElements()
-//	{
-//		return elements;
-//	}
-//	public xnode getElement(String name)
-//	{
-//		return elements.get(name);
-//	}
+
 }

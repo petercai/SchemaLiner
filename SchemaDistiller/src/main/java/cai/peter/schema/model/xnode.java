@@ -20,29 +20,12 @@ public class xnode
 	protected List<xgroup>		groups		= new ArrayList<xgroup>();
 	protected List<xattribute>	attributes	= new ArrayList<xattribute>();
 
-//	public xnode(String name, String path, String cardinality,
-//		List<xnode> children)
-//	{
-//		super();
-//		this.name = name;
-//		this.path = path;
-//		this.cardinality = cardinality;
-//		this.children = children;
-//	}
 
 	public xnode(String name)
 	{
 		super();
 		this.name = name;
 	}
-
-//	public xnode(xnode parent, String name)
-//	{
-//		super();
-//		this.name = name;
-//		this.path = parent.getPath();
-//		parent.addChild(this);
-//	}
 
 	public String getPath()
 	{
@@ -61,8 +44,8 @@ public class xnode
 
 	public void addChild( xnode child)
 	{
-		child.setPath(getPath());
 		children.add(child);
+		child.setPath(getPath());
 	}
 
 	public void addAttribute( xattribute attr)
@@ -70,11 +53,6 @@ public class xnode
 		attributes.add(attr);
 	}
 
-//	public void setParent( xnode parent)
-//	{
-//		this.path = parent.getPath();
-//		parent.addChild(this);
-//	}
 
 	@Override
 	public String toString()
@@ -104,6 +82,7 @@ public class xnode
 	public void addGroup(xgroup  group)
 	{
 		groups.add(group);
+		group.setPath(getPath());
 	}
 
 	public List<xattribute> getAttributes()
