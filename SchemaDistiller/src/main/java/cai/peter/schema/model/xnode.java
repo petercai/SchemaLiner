@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class xnode
 {
-	protected String			name;
 	protected String			path;
-	protected String			cardinality;
+	protected String			name;
+	protected String			cardinality="";
 	protected List<xnode>		children	= new ArrayList<xnode>();
 	protected List<xgroup>		groups		= new ArrayList<xgroup>();
 	protected List<xattribute>	attributes	= new ArrayList<xattribute>();

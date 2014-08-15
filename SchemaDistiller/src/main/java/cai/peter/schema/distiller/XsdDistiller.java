@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.exolab.castor.xml.schema.Annotated;
 import org.exolab.castor.xml.schema.AttributeDecl;
 import org.exolab.castor.xml.schema.ComplexType;
@@ -27,30 +26,18 @@ import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xgroup;
 import cai.peter.schema.model.xnode;
 
-public class distiller {
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger	logger	= Logger.getLogger(distiller.class);
+public class XsdDistiller 
+{
 
-
-	/**
-	 * @param parent
-	 * @param elementDecl
-	 * @return current xnode
-	 * @throws Exception
-	 */
-	public xnode processElement(/*xnode parent,*/ final ElementDecl elementDecl) throws Exception
+	public xnode processElement(final ElementDecl elementDecl, final String path) throws Exception
 	{
 		xelement node = new xelement(elementDecl.getName());
-		node.setCardinality(elementDecl.getMinOccurs(),
-							elementDecl.getMaxOccurs());
+		node.setPath(path);
+		node.setCardinality(elementDecl.getMinOccurs(),elementDecl.getMaxOccurs());
 		XMLType typeReference = elementDecl.getType();
 		if (typeReference.isComplexType())
 		{
-//			result.setParent(parent);
-			processComplexType(	node,
-								(ComplexType) typeReference);
+			processComplexType(	node,(ComplexType) typeReference);
 		}
 		else
 		{
@@ -61,9 +48,7 @@ public class distiller {
 			{
 				populateFacets(node,(SimpleType)typeReference );
 			}
-
 		}
-
 		return node;
 	}
 
@@ -89,9 +74,7 @@ public class distiller {
 				el.range[1] = facet.getValue();
 				break;
 			}
-
 		}
-
 	}
 
 	public void processComplexType(xnode node, ComplexType complexType) throws Exception
@@ -155,54 +138,46 @@ public class distiller {
 		}
 	}
 
-	/**
-	 * @param container
-	 * @param group - schema abstract group. could be group, element, sequence, choice or all
-	 * @throws Exception
-	 */
 	private xgroup processGroup(xnode container, final Group group) throws Exception
 	{
 		xgroup result = new xgroup(group.getOrder().name());
-//		result.setPath(container.getPath());
 		container.addGroup(result);
 
 		Enumeration<Annotated> particles = group.enumerate();
 		while (particles.hasMoreElements())
 		{
-			Object o = particles.nextElement();
-			if (o instanceof Group)
+			Object particle = particles.nextElement();
+			if (particle instanceof Group)
 			{
-				result.addGroup(processGroup(container, (Group) o));
+				result.addGroup(processGroup(container, (Group)particle));
 			}
-			else if (o instanceof ElementDecl )
+			else if (particle instanceof ElementDecl )
 			{
-				xnode element = processElement(/*container,*/ (ElementDecl) o);
+				xnode element = processElement((ElementDecl)particle, container.getPath());
 				container.addChild(element);
 				result.addItem(element.getName());
 			}
-			else if( o instanceof Wildcard )
+			else if( particle instanceof Wildcard )
 			{
-				xnode node = processWildard(/*container,*/ (Wildcard) o);
+				xnode node = processWildard((Wildcard) particle);
 				container.addChild(node);
 				result.addItem(node.getName());
 
 			}
 			else
 			{
-				throw new Exception("Unknown particle type: " + o.getClass().getName());
+				throw new Exception("Unknown particle type: " + particle.getClass().getName());
 			}
 		}
 
 		return result;
 	}
 
-	xnode processWildard( /*xnode parent,*/ Wildcard content)
+	xnode processWildard(Wildcard content)
 	{
 		xnode result = new xnode(content.getProcessContent());
 		result.setCardinality(content.getMinOccurs(),
 		                      content.getMaxOccurs());
-//		result.setParent(parent);
-
 		return result;
 	}
 
@@ -213,7 +188,7 @@ public class distiller {
 		Collection<ElementDecl> elementDecls = schema.getElementDecls();
 		for (ElementDecl e : elementDecls)
 		{
-			result.add(processElement(e));
+			result.add(processElement(e,null));
 		}
 		return result;
 	}

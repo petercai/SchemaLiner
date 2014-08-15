@@ -17,7 +17,7 @@ import org.exolab.castor.xml.schema.Schema;
 import org.junit.Before;
 import org.junit.Test;
 
-import cai.peter.schema.distiller.distiller;
+import cai.peter.schema.distiller.XsdDistiller;
 import cai.peter.schema.model.xnode;
 
 public class TestDistillerTest
@@ -28,14 +28,14 @@ public class TestDistillerTest
 	private static final Logger	logger	= Logger.getLogger(TestDistillerTest.class);
 	String file = "Services/External/CustomerAccountingUnitServiceIntf.xsd";
 	private Schema	schema;
-	private distiller	dt;
+	private XsdDistiller	dt;
 	@Before
 	public void init() throws IOException, URISyntaxException
 	{
 		URL resource = this.getClass().getClassLoader().getResource(file);
 		URI uri = resource.toURI();
 		schema = CastorUtil.getSchema(new File(uri));
-		dt = new distiller();
+		dt = new XsdDistiller();
 
 	}
 	@Test
@@ -55,7 +55,7 @@ public class TestDistillerTest
 		if( nodes == null ) return;
 		for( xnode node : nodes)
 		{
-			logger.info(node.getPath());
+			logger.info(node);
 			logElement(node.getChildren());
 		}
 	}
