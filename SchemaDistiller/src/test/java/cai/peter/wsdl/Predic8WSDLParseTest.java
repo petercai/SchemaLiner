@@ -18,7 +18,7 @@ import com.predic8.wsdl.PortType;
 import com.predic8.wsdl.Service;
 import com.predic8.wsdl.WSDLParser;
 
-public class WSDLParseTest {
+public class Predic8WSDLParseTest {
 
 	@Test
 	public void test() 
@@ -27,10 +27,10 @@ public class WSDLParseTest {
 //		InputStream stream = ClassLoader.getSystemResourceAsStream("wsdl/BLZService.wsdl");
 //		Definitions defs = parser.parse("http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL");
 //		Definitions defs = parser.parse("http://queue.amazonaws.com/doc/2012-11-05/QueueService.wsdl");
-//		Definitions defs = parser.parse("https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl");
+		Definitions defs = parser.parse("https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl");
 //		InputStream stream = ClassLoader.getSystemResourceAsStream("ebay/PayPalSvc.wsdl");
-		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("ebay/PayPalSvc.wsdl");
-		Definitions defs = parser.parse(stream);
+//		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("ebay/PayPalSvc.wsdl");
+//		Definitions defs = parser.parse(stream);
 
 		out("-------------- WSDL Details --------------");
 		out("TargenNamespace: \t" + defs.getTargetNamespace());
