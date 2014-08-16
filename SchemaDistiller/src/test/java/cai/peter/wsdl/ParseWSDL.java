@@ -23,7 +23,11 @@ public class ParseWSDL {
 
 	public static void main(String[] args) {
 		WSDLParser parser = new WSDLParser();
-		InputStream stream = ClassLoader.getSystemResourceAsStream("wsdl/BLZService.wsdl");
+//		InputStream stream = ClassLoader.getSystemResourceAsStream("wsdl/BLZService.wsdl");
+//		Definitions defs = parser.parse("http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL");
+//		Definitions defs = parser.parse("http://queue.amazonaws.com/doc/2012-11-05/QueueService.wsdl");
+//		Definitions defs = parser.parse("https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl");
+		InputStream stream = ClassLoader.getSystemResourceAsStream("ebay/PayPalSvc.wsdl");
 		Definitions defs = parser.parse(stream);
 
 		out("-------------- WSDL Details --------------");
