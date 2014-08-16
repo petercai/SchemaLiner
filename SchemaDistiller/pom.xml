@@ -114,6 +114,11 @@
     	<artifactId>soa-model-core</artifactId>
     	<version>1.4.1</version>
     </dependency>
+    <dependency>
+    	<groupId>org.apache.cxf</groupId>
+    	<artifactId>cxf-rt-core</artifactId>
+    	<version>2.7.12</version>
+    </dependency>
   </dependencies>
   <repositories>
 		<repository>
