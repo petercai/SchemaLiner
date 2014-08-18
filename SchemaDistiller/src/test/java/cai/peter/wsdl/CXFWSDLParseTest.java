@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Message;
+import javax.wsdl.Part;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
@@ -27,13 +28,7 @@ public class CXFWSDLParseTest {
 		Bus bus = BusFactory.getDefaultBus();
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
 		Definition defs = wsdlManager.getDefinition(wsdlUrl);
-		WSDLServiceBuilder wsdlServiceBuilder = new WSDLServiceBuilder(bus);
-		List<ServiceInfo> serviceInfos = wsdlServiceBuilder.buildServices(defs);
-		ServiceInfo serviceInfo = serviceInfos.get(0);
-		List<SchemaInfo> schemas = serviceInfo.getSchemas();
-		SchemaInfo schemaInfo = schemas.get(0);
-		XmlSchema schema = schemaInfo.getSchema();
-
+		
 
 		out("-------------- WSDL Details --------------");
 		out("TargenNamespace: \t" + defs.getTargetNamespace());
@@ -43,11 +38,21 @@ public class CXFWSDLParseTest {
 		out("\n");
 
 		/* For detailed schema information see the FullSchemaParser.java sample.*/
-//		out("Schemas: ");
-//		for (Schema schema : defs.getSchemas()) {
-//			out("  TargetNamespace: \t" + schema.getTargetNamespace());
-//		}
-//		out("\n");
+		out("Schemas: ");
+		WSDLServiceBuilder wsdlServiceBuilder = new WSDLServiceBuilder(bus);
+		List<ServiceInfo> serviceInfos = wsdlServiceBuilder.buildServices(defs);
+		for( ServiceInfo serviceInfo : serviceInfos)
+		{
+			List<SchemaInfo> schemas = serviceInfo.getSchemas();
+			for( SchemaInfo schemaInfo : schemas )
+			{
+				XmlSchema schema = schemaInfo.getSchema();
+				out("  TargetNamespace: \t" + schema.getTargetNamespace());
+			}
+			
+		}
+		out("\n");
+		
 		
 		out("Messages: ");
 //		Map messages = defs.getMessages();
@@ -59,10 +64,11 @@ public class CXFWSDLParseTest {
 			out("");
 			out("  Message Name: " + localPart);
 			out("  Message Parts: ");
-			for (Part part : msg.getParts()) {
+			for ( Object obj: msg.getParts().values()) {
+				Part part  = (Part)obj;
 				out("    Part Name: " + part.getName());
-				out("    Part Element: " + ((part.getElement() != null) ? part.getElement() : "not available!"));
-				out("    Part Type: " + ((part.getType() != null) ? part.getType() : "not available!" ));
+				out("    Part Element: " + ((part.getElementName() != null) ? part.getElementName() : "not available!"));
+				out("    Part Type: " + ((part.getTypeName() != null) ? part.getTypeName() : "not available!" ));
 				out("");
 			}
 		}

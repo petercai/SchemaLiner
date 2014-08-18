@@ -1,6 +1,9 @@
 package cai.peter.wsdl;
 
+import org.apache.log4j.Logger;
+
 import java.io.InputStream;
+import java.net.URL;
 
 import org.junit.Test;
 
@@ -19,6 +22,10 @@ import com.predic8.wsdl.Service;
 import com.predic8.wsdl.WSDLParser;
 
 public class Predic8WSDLParseTest {
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger	logger	= Logger.getLogger(Predic8WSDLParseTest.class);
 
 	@Test
 	public void test() 
@@ -27,10 +34,11 @@ public class Predic8WSDLParseTest {
 //		InputStream stream = ClassLoader.getSystemResourceAsStream("wsdl/BLZService.wsdl");
 //		Definitions defs = parser.parse("http://wsf.cdyne.com/WeatherWS/Weather.asmx?WSDL");
 //		Definitions defs = parser.parse("http://queue.amazonaws.com/doc/2012-11-05/QueueService.wsdl");
-		Definitions defs = parser.parse("https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl");
+//		Definitions defs = parser.parse("https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl");
 //		InputStream stream = ClassLoader.getSystemResourceAsStream("ebay/PayPalSvc.wsdl");
-//		InputStream stream = this.getClass().getClassLoader().getResourceAsStream("ebay/PayPalSvc.wsdl");
-//		Definitions defs = parser.parse(stream);
+		URL resource = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
+		logger.info("test() - URL resource=" + resource);
+		Definitions defs = parser.parse(resource.toString());
 
 		out("-------------- WSDL Details --------------");
 		out("TargenNamespace: \t" + defs.getTargetNamespace());
