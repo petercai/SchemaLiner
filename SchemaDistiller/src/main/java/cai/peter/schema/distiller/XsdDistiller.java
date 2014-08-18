@@ -199,9 +199,6 @@ public class XsdDistiller
 		List<xnode> result = new ArrayList<xnode>();
 		for (ComplexType t : schema.getComplexTypes())
 		{
-			String elementName = t.getName();
-//			elements.put(elementName, processElement(root, xElement));
-//			result.add(e)
 		}
 		
 		return result;
