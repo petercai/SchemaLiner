@@ -61,7 +61,19 @@ public class SchemaTransformer
 		}
 	}
 
-	public static void transform(File xsdFile) throws Exception
+	public static void transform(File file) throws Exception
+	{
+		if( file.isDirectory())
+		{
+			for( File f : file.listFiles())
+			{
+				transformSingle(f);
+			}
+		}
+		else
+			transformSingle(file);
+	}
+	protected static void transformSingle(File xsdFile) throws Exception
 	{
 		Schema schema = CastorUtil.getSchema(xsdFile);
 		XsdDistiller distiller = new XsdDistiller();
