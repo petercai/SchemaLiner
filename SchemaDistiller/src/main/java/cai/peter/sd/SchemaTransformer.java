@@ -101,40 +101,7 @@ public class SchemaTransformer
 		}
 		allInOneFile.close();
 	}
-//	protected static void transformF(File xsdFile) throws Exception
-//	{
-//		Schema schema = CastorUtil.getSchema(xsdFile);
-//		
-//		Function<Schema, List<xnode>> function = new Function<Schema, List<xnode>>()
-//		{
-//			public List<xnode> apply(Schema schema)
-//			{
-//				List<xnode> processElements= new ArrayList<xnode>();
-//				XsdDistiller distiller = new XsdDistiller();
-//				try
-//				{
-//					processElements = distiller.processElements(schema);
-//				}
-//				catch (Exception e)
-//				{
-//					e.printStackTrace();
-//				}
-//				return processElements;
-//			}
-//		};
-//		
-//		SchemaTransformer allInOneFile = new SchemaTransformer(new File(xsdFile.toString()+".all"));
-//		for( xnode node : function.apply(schema))
-//		{
-//			allInOneFile.transform(node);
-//			String name = node.getName();
-//			File outputFile = new File(xsdFile.toString()+"."+name);
-//			SchemaTransformer elementFile = new SchemaTransformer((outputFile));
-//			elementFile.transform(node);
-//			elementFile.close();
-//		}
-//		allInOneFile.close();
-//	}
+
 
 	protected void close() throws IOException
 	{
