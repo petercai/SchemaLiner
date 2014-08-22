@@ -62,16 +62,16 @@ public class XsdDistiller
 			switch( ( facet.getName()))
 			{
 			case "maxLength":
-				el.range[1] = facet.getValue();
+				el.rangeTo = facet.getValue();
 				break;
 			case "minLength":
-				el.range[0] = facet.getValue();
+				el.rangeFrom = facet.getValue();
 				break;
 			case "totalDigits":
-				el.range[0] = facet.getValue();
+				el.rangeFrom = facet.getValue();
 				break;
 			case "fractionDigits":
-				el.range[1] = facet.getValue();
+				el.rangeTo = facet.getValue();
 				break;
 			}
 		}

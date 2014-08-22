@@ -9,21 +9,13 @@ import java.text.MessageFormat;
 
 public class xelement extends xnode
 {
-	public String type;
-	public String[] range = new String[]{null,null};
+	protected String type;
+//	public String[] range = new String[]{null,null};
+	public String rangeFrom,rangeTo;
 	public xelement(String name)
 	{
 		super(name);
 	}
-
-//	public xelement(xnode node, String type)
-//	{
-//		super(node.name);
-//		super.path = node.path;
-//		super.cardinality = node.cardinality;
-//		super.children = node.children;
-//		this.type = type;
-//	}
 
 	@Override
 	public String toString()
@@ -35,10 +27,10 @@ public class xelement extends xnode
 		s.append(name);
 		s.append(cardinality);
 		s.append(type==null?"":":"+type);
-		if( range[0]!=null || range[1] != null)
+		if( rangeFrom!=null || rangeTo != null)
 			s.append(MessageFormat.format(	"[{0}.{1}]",
-			                              	(range[0]==null?".":range[0]),
-			                              	(range[1]==null?".":range[1])));
+			                              	(rangeFrom==null?".":rangeFrom),
+			                              	(rangeTo==null?".":rangeTo)));
 
 		return s.toString();
 	}

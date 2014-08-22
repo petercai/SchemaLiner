@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Joiner;
+
 public class xgroup
 {
 	protected String path;
@@ -38,15 +40,15 @@ public class xgroup
 			{
 			case "choice":
 				s.append(path);
-				s.append("(");
-				s.append(Arrays.toString(items.toArray()).replaceAll(",", "|"));
+				s.append("/(");
+				Joiner.on("|").appendTo(s, items);
 				s.append(")");
 				result = s.toString();
 				break;
 			case "all":
 				s.append(path);
-				s.append("<");
-				s.append(Arrays.toString(items.toArray()).replaceAll(",", "|"));
+				s.append("/<");
+				Joiner.on("|").appendTo(s, items);
 				s.append(">");
 				result = s.toString();
 				break;
