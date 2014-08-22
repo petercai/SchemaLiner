@@ -31,8 +31,8 @@ public class CXFWSDLParseTest {
 	@Test
 	public void test() throws WSDLException 
 	{
-		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
-//		URL wsdlUrl = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
+//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
+		URL wsdlUrl = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
 
 		Bus bus = BusFactory.getDefaultBus();
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);

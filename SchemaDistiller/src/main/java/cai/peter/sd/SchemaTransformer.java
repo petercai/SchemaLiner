@@ -71,7 +71,8 @@ public class SchemaTransformer
 				@Override
 				public boolean accept(File dir, String name)
 				{
-					return name.toLowerCase().endsWith(".xsd");
+					String lowerCase = name.toLowerCase();
+					return lowerCase.endsWith(".xsd")/*||lowerCase.endsWith(".wsdl")*/;
 				}
 			});
 			for( File f : listFiles)
