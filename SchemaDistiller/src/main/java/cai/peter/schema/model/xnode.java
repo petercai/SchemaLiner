@@ -4,14 +4,9 @@
  ***********************************************/
 package cai.peter.schema.model;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Peter Cai
- *
- */
 public class xnode
 {
 	protected String			path;
@@ -38,10 +33,23 @@ public class xnode
 
 	public String getPath()
 	{
-		return path==null?("/"+name):(path+"/"+name);
+		return path==null?("/"+getQName()):(path+"/"+getQName());
 	}
 
 	public void setCardinality(int minOccurs, int maxOccurs)
+	{
+		if (minOccurs == 0 && maxOccurs == 1)
+			cardinality = "?"; // optional
+		if (minOccurs == 0  && maxOccurs == -1 )
+			cardinality = "*";
+		if (minOccurs == 1  && maxOccurs == -1 )
+			cardinality = "+";
+	}
+
+	/*
+	 * TODO
+	 */
+	public void setCardinality(long minOccurs, long maxOccurs)
 	{
 		if (minOccurs == 0 && maxOccurs == 1)
 			cardinality = "?"; // optional
@@ -62,6 +70,10 @@ public class xnode
 		attributes.add(attr);
 	}
 
+	public String getQName()
+	{
+		return ns!=null?ns+":"+name:name;
+	}
 
 	@Override
 	public String toString()

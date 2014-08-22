@@ -20,13 +20,12 @@ import org.exolab.castor.xml.schema.SimpleType;
 import org.exolab.castor.xml.schema.Wildcard;
 import org.exolab.castor.xml.schema.XMLType;
 
-import cai.peter.schema.CastorUtil;
 import cai.peter.schema.model.xattribute;
 import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xgroup;
 import cai.peter.schema.model.xnode;
 
-public class XsdDistiller 
+public class XsdDistiller
 {
 
 	public xnode processElement(final ElementDecl elementDecl, final String path) throws Exception
@@ -41,7 +40,7 @@ public class XsdDistiller
 		}
 		else
 		{
-			String primitiveTypeName = CastorUtil.getPrimitiveTypeName(typeReference);
+			String primitiveTypeName = getPrimitiveTypeName(typeReference);
 
 			node.setType(primitiveTypeName);
 			if( typeReference instanceof SimpleType)
@@ -192,16 +191,16 @@ public class XsdDistiller
 		}
 		return result;
 	}
-	
-	
-	public List<xnode> processTypes(Schema schema) throws Exception
+
+
+	public String getPrimitiveTypeName(XMLType xmlType)
 	{
-		List<xnode> result = new ArrayList<xnode>();
-		for (ComplexType t : schema.getComplexTypes())
-		{
-		}
-		
-		return result;
+		String derivationMethod = xmlType.getDerivationMethod();
+		XMLType baseType = xmlType.getBaseType();
+		if( derivationMethod !=null && baseType != null )
+			return getPrimitiveTypeName(baseType);
+		else
+			return xmlType.getName();
 	}
 
 
