@@ -177,11 +177,14 @@ public class WsdlDistiller
 	void processGroupParticle(XmlSchemaObject item, xgroup parentGroup, xnode parent)
 	{
 		if( item instanceof XmlSchemaGroupParticle)
-			parentGroup.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
+		{
+			xgroup childGroup = processGroup(parent, (XmlSchemaGroupParticle)item);
+			parentGroup.addGroup(childGroup);
+		}
 		else if (item instanceof XmlSchemaElement)
 		{
 			xnode element = crawlElement(parent, (XmlSchemaElement)item);
-			parentGroup.addItem(element.getName());
+			parentGroup.addNode(element);
 		}
 		else
 			throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
@@ -198,15 +201,16 @@ public class WsdlDistiller
 			for(XmlSchemaSequenceMember it : items)
 			{
 				XmlSchemaObject item = (XmlSchemaObject)it;
-					if( item instanceof XmlSchemaGroupParticle)
-						result.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
-					else if (item instanceof XmlSchemaElement)
-					{
-						xnode element = crawlElement(parent, (XmlSchemaElement)item);
-						result.addItem(element.getName());
-					}
-					else
-						throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
+				processGroupParticle(item, result, parent);
+//					if( item instanceof XmlSchemaGroupParticle)
+//						result.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
+//					else if (item instanceof XmlSchemaElement)
+//					{
+//						xnode element = crawlElement(parent, (XmlSchemaElement)item);
+//						result.addNode(element);
+//					}
+//					else
+//						throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
 			}
 		}
 		else if (group instanceof XmlSchemaChoice)
@@ -215,16 +219,17 @@ public class WsdlDistiller
 			List<XmlSchemaObject> items = ((XmlSchemaChoice)group).getItems();
 			for( XmlSchemaObject item : items )
 			{
-				if( item instanceof XmlSchemaGroupParticle)
-					result.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
-				else if (item instanceof XmlSchemaElement)
-				{
-					xnode element = crawlElement(parent, (XmlSchemaElement)item);
-					result.addItem(element.getName());
-				}
-				else
-					throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
-
+				processGroupParticle(item, result, parent);
+//				if( item instanceof XmlSchemaGroupParticle)
+//					result.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
+//				else if (item instanceof XmlSchemaElement)
+//				{
+//					xnode element = crawlElement(parent, (XmlSchemaElement)item);
+//					result.addNode(element);
+//				}
+//				else
+//					throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
+//
 			}
 
 		}
@@ -235,7 +240,7 @@ public class WsdlDistiller
 			for(XmlSchemaElement item : items)
 			{
 				xnode element = crawlElement(parent, item);
-				result.addItem(element.getName());
+				result.addNode(element);
 
 			}
 

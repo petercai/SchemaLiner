@@ -5,7 +5,6 @@
 package cai.peter.schema.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Joiner;
@@ -14,7 +13,7 @@ public class xgroup
 {
 	protected String path;
 	protected String order;
-	protected List<String> nodes = new ArrayList<String>();
+	protected List<xnode> nodes = new ArrayList<xnode>();
 	protected List<xgroup> groups = new ArrayList<xgroup>();
 	public xgroup(String order)
 	{
@@ -25,6 +24,16 @@ public class xgroup
 	public void setPath(String path)
 	{
 		this.path = path;
+	}
+
+	List<String> toStringList(List<xnode> nodes)
+	{
+		ArrayList<String> result = new ArrayList<String>(nodes.size());
+		for( xnode node : nodes)
+		{
+			result.add(node.getName());
+		}
+		return result;
 	}
 
 	@Override
@@ -41,14 +50,14 @@ public class xgroup
 			case "choice":
 				s.append(path);
 				s.append("/(");
-				Joiner.on("|").appendTo(s, nodes);
+				Joiner.on("|").appendTo(s, toStringList(nodes));
 				s.append(")");
 				result = s.toString();
 				break;
 			case "all":
 				s.append(path);
 				s.append("/<");
-				Joiner.on("|").appendTo(s, nodes);
+				Joiner.on("|").appendTo(s, toStringList(nodes));
 				s.append(">");
 				result = s.toString();
 				break;
@@ -67,12 +76,12 @@ public class xgroup
 		groups.add(group);
 	}
 
-	public List<String> getNodes()
+	public List<xnode> getNodes()
 	{
 		return nodes;
 	}
 
-	public void addItem(String item)
+	public void addNode(xnode item)
 	{
 		nodes.add(item);
 	}

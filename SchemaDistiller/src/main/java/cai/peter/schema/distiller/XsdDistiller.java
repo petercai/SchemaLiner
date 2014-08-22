@@ -154,13 +154,13 @@ public class XsdDistiller
 			{
 				xnode element = processElement((ElementDecl)particle, container.getPath());
 				container.addChild(element);
-				result.addItem(element.getName());
+				result.addNode(element);
 			}
 			else if( particle instanceof Wildcard )
 			{
 				xnode node = processWildard((Wildcard) particle);
 				container.addChild(node);
-				result.addItem(node.getName());
+				result.addNode(node);
 
 			}
 			else
