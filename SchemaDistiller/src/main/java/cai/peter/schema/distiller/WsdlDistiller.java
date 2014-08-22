@@ -7,9 +7,13 @@
  ***********************************************/
 package cai.peter.schema.distiller;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.wsdl.Definition;
@@ -22,12 +26,24 @@ import org.apache.cxf.service.model.SchemaInfo;
 import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.wsdl11.WSDLServiceBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.utils.XmlSchemaRef;
 
+import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xnode;
 
 
 public class WsdlDistiller
 {
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger	logger	= Logger.getLogger(WsdlDistiller.class);
+
+	Map<QName, XmlSchemaElement> xelements = new HashMap<QName, XmlSchemaElement>();
+
 	void processSchemas(Definition defs)
 	{
 		WSDLServiceBuilder wsdlServiceBuilder = new WSDLServiceBuilder(BusFactory.getDefaultBus());
@@ -38,7 +54,8 @@ public class WsdlDistiller
 			for( SchemaInfo schemaInfo : schemas )
 			{
 				XmlSchema schema = schemaInfo.getSchema();
-				System.out.println("  TargetNamespace: \t" + schema.getTargetNamespace());
+				Map<QName, XmlSchemaElement> elements = schema.getElements();
+				xelements.putAll(elements);
 			}
 
 		}
@@ -49,34 +66,70 @@ public class WsdlDistiller
 	{
 		ArrayList<xnode> result = new ArrayList<xnode>();
 
-
-
 		processSchemas(defs);
 
-
-
-
-
-		Set<QName> keySet = defs.getMessages().<QName>keySet();
-		for (QName qName : keySet)
+		Set<QName> messageSet = defs.getMessages().<QName>keySet();
+		for (QName msgQName : messageSet)
 		{
-//			QName qName = (QName)key;
-			String localPart = qName.getLocalPart();
+			String localPart = msgQName.getLocalPart();
 			xnode msgNode = new xnode("message", localPart);
 			result.add(msgNode);
-			Message msg = defs.getMessage(qName);
-			System.out.println("");
-			System.out.println("  Message Name: " + localPart);
-			System.out.println("  Message Parts: ");
-			Collection<Part> values = msg.getParts().<Part>values();
-			for ( Part part: values)
+
+			Message msg = defs.getMessage(msgQName);
+			for ( Part part: (Collection<Part>) msg.getParts().<Part>values())
 			{
-				System.out.println("    Part Name: " + part.getName());
-				System.out.println("    Part Element: " + ((part.getElementName() != null) ? part.getElementName() : "not available!"));
-				System.out.println("    Part Type: " + ((part.getTypeName() != null) ? part.getTypeName() : "not available!" ));
+				/*
+				 * Part already is a schema element
+				 */
+				QName partElement = part.getElementName();
+				if( partElement!= null)
+				{
+					msgNode.addChild(processElement(xelements.get(partElement)));
+
+				}
+				QName partType = part.getTypeName();
+				if( partType != null )
+				{
+					processType();
+				}
+//				System.out.println("    Part Type: " + ((partType != null) ? partType : "not available!" ));
 			}
 		}
 
 		return result;
 	}
+
+	xnode processElement(XmlSchemaElement element)
+	{
+		String name = element.getName();
+		xelement el = new xelement(name);
+		el.setCardinality(element.getMinOccurs(), element.getMaxOccurs());
+		/*
+		 * TODO
+		 */
+		XmlSchemaRef<XmlSchemaElement> schemaRef = element.getRef();
+
+
+		XmlSchemaType schemaType = element.getSchemaType();
+		return el;
+	}
+
+	void processComplexType( xnode node, XmlSchemaType type)
+	{
+		/*
+		 * TODO: extension
+		 */
+		if( type instanceof XmlSchemaComplexType )
+		{
+			QName baseSchemaTypeName = ((XmlSchemaComplexType)type).getBaseSchemaTypeName();
+		}
+
+
+	}
+
+	/*
+	 * TODO
+	 */
+	void processType()
+	{}
 }
