@@ -29,15 +29,15 @@ import org.junit.Test;
 public class CXFWSDLParseTest {
 
 	@Test
-	public void test() throws WSDLException 
+	public void test() throws WSDLException
 	{
-//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
-		URL wsdlUrl = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
+		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
+//		URL wsdlUrl = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
 
 		Bus bus = BusFactory.getDefaultBus();
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
 		Definition defs = wsdlManager.getDefinition(wsdlUrl);
-		
+
 
 		out("-------------- WSDL Details --------------");
 		out("TargenNamespace: \t" + defs.getTargetNamespace());
@@ -58,10 +58,10 @@ public class CXFWSDLParseTest {
 				XmlSchema schema = schemaInfo.getSchema();
 				out("  TargetNamespace: \t" + schema.getTargetNamespace());
 			}
-			
+
 		}
 		out("\n");
-		
+
 		out("Services: ");
 		for (Service service : (Collection<Service>) defs.getServices().<Service>values()) {
 			out("  Service Name: " + service.getQName().getLocalPart());
@@ -93,7 +93,7 @@ public class CXFWSDLParseTest {
 			out("");
 		}
 		out("");
-	
+
 
 		out("PortTypes: ");
 		Collection<PortType> pts = defs.getPortTypes().<PortType>values();
@@ -118,7 +118,7 @@ public class CXFWSDLParseTest {
 						out("      Fault Message: " + fault.getMessage().getQName().getLocalPart());
 					}
 				} else out("      There are no faults available!");
-				
+
 			}
 			out("");
 		}

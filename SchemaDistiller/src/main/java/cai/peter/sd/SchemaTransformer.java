@@ -11,9 +11,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 
+import javax.wsdl.Definition;
+
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.wsdl.WSDLManager;
 import org.exolab.castor.xml.schema.Schema;
 
 import cai.peter.schema.CastorUtil;
+import cai.peter.schema.distiller.WsdlDistiller;
 import cai.peter.schema.distiller.XsdDistiller;
 import cai.peter.schema.model.xgroup;
 import cai.peter.schema.model.xnode;
@@ -21,7 +27,7 @@ import cai.peter.schema.model.xnode;
 public class SchemaTransformer
 {
 	private BufferedWriter bufferedWriter = null;
-	
+
 	public SchemaTransformer(File outputFile) throws IOException
 	{
 		bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
@@ -66,25 +72,47 @@ public class SchemaTransformer
 	{
 		if( file.isDirectory())
 		{
+			/*
+			 * XSD
+			 */
 			File[] listFiles = file.listFiles(new FilenameFilter()
 			{
 				@Override
 				public boolean accept(File dir, String name)
 				{
 					String lowerCase = name.toLowerCase();
-					return lowerCase.endsWith(".xsd")/*||lowerCase.endsWith(".wsdl")*/;
+					return lowerCase.endsWith(".xsd");
 				}
 			});
 			for( File f : listFiles)
 			{
-				transformSingle(f);
+				transformXsd(f);
 			}
+			/*
+			 * WSDL
+			 */
+			listFiles = file.listFiles(new FilenameFilter()
+			{
+				@Override
+				public boolean accept(File dir, String name)
+				{
+					String lowerCase = name.toLowerCase();
+					return lowerCase.endsWith(".wsdl");
+				}
+			});
+
 		}
 		else
-			transformSingle(file);
+		{
+			String filename = file.getName().toLowerCase();
+			if( filename.endsWith(".xsd"))
+				transformXsd(file);
+			else if( filename.endsWith(".wsdl"))
+				transformWsdl(file);
+		}
 	}
-	
-	protected static void transformSingle(File xsdFile) throws Exception
+
+	protected static void transformXsd(File xsdFile) throws Exception
 	{
 		Schema schema = CastorUtil.getSchema(xsdFile);
 		XsdDistiller distiller = new XsdDistiller();
@@ -96,6 +124,30 @@ public class SchemaTransformer
 			allInOneFile.transform(node);
 			String name = node.getName();
 			File outputFile = new File(xsdFile.toString()+"."+name);
+			SchemaTransformer elementFile = new SchemaTransformer((outputFile));
+			elementFile.transform(node);
+			elementFile.close();
+		}
+		allInOneFile.close();
+	}
+
+	protected static void transformWsdl(File wsdlFile) throws Exception
+	{
+		WsdlDistiller distiller = new WsdlDistiller();
+
+//		URL wsdlUrl = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
+
+		Bus bus = BusFactory.getDefaultBus();
+		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
+		Definition defs = wsdlManager.getDefinition(wsdlFile.toURI().toURL());
+		List<xnode> elements = distiller.processDefinitions(defs);
+
+		SchemaTransformer allInOneFile = new SchemaTransformer(new File(wsdlFile.toString()+".messages"));
+		for( xnode node : elements)
+		{
+			allInOneFile.transform(node);
+			String name = node.getName();
+			File outputFile = new File(wsdlFile.toString()+"."+name);
 			SchemaTransformer elementFile = new SchemaTransformer((outputFile));
 			elementFile.transform(node);
 			elementFile.close();

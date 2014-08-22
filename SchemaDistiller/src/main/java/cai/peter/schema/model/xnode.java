@@ -4,6 +4,7 @@
  ***********************************************/
 package cai.peter.schema.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class xnode
 {
 	protected String			path;
 	protected String			name;
+	protected String			ns;
 	protected String			cardinality="";
 	protected List<xnode>		children	= new ArrayList<xnode>();
 	protected List<xgroup>		groups		= new ArrayList<xgroup>();
@@ -24,6 +26,13 @@ public class xnode
 	public xnode(String name)
 	{
 		super();
+		this.name = name;
+	}
+
+	public xnode(String ns, String name)
+	{
+		super();
+		this.ns = ns;
 		this.name = name;
 	}
 
@@ -57,7 +66,23 @@ public class xnode
 	@Override
 	public String toString()
 	{
-		return path + name + cardinality;
+		StringBuilder s = new StringBuilder();
+		s.append(path==null?"/":path);
+		if( path !=null )
+			s.append("/");
+		s.append(ns!=null?ns+":"+name:name);
+		s.append(cardinality);
+		return s.toString();
+	}
+
+	public String getNs()
+	{
+		return ns;
+	}
+
+	public void setNs(String ns)
+	{
+		this.ns = ns;
 	}
 
 	public String getName()
