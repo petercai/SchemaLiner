@@ -7,8 +7,8 @@ package cai.peter.sd;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.exolab.castor.xml.schema.Schema;
@@ -17,8 +17,6 @@ import cai.peter.schema.CastorUtil;
 import cai.peter.schema.distiller.XsdDistiller;
 import cai.peter.schema.model.xgroup;
 import cai.peter.schema.model.xnode;
-
-import com.google.common.base.Function;
 
 public class SchemaTransformer
 {
@@ -68,7 +66,15 @@ public class SchemaTransformer
 	{
 		if( file.isDirectory())
 		{
-			for( File f : file.listFiles())
+			File[] listFiles = file.listFiles(new FilenameFilter()
+			{
+				@Override
+				public boolean accept(File dir, String name)
+				{
+					return name.toLowerCase().endsWith(".xsd");
+				}
+			});
+			for( File f : listFiles)
 			{
 				transformSingle(f);
 			}
