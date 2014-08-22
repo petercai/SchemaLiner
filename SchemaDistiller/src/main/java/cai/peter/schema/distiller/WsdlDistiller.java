@@ -34,6 +34,9 @@ import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
+import org.apache.ws.commons.schema.XmlSchemaSimpleType;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
+import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.utils.XmlSchemaRef;
 
@@ -106,6 +109,25 @@ public class WsdlDistiller
 		return result;
 	}
 
+	public String getPrimitiveTypeName(XmlSchemaSimpleType simpleType)
+	{
+		XmlSchemaSimpleTypeContent content = simpleType.getContent();
+		if( content instanceof XmlSchemaSimpleTypeRestriction)
+		{
+			QName baseTypeName = ((XmlSchemaSimpleTypeRestriction)content).getBaseTypeName();
+			return baseTypeName.getLocalPart();
+		}
+		else
+			throw new RuntimeException("Unsupported XmlSchemaSimpleTypeContent: "+content.getClass().getName()+"!");
+//		String derivationMethod = xmlType.getDerivationMethod();
+//		XMLType baseType = xmlType.getBaseType();
+//		if( derivationMethod !=null && baseType != null )
+//			return getPrimitiveTypeName(baseType);
+//		else
+//			return xmlType.getName();
+	}
+
+
 	xnode crawlElement(xnode parent, XmlSchemaElement element)
 	{
 		xelement child = null;
@@ -113,13 +135,22 @@ public class WsdlDistiller
 		if( schemaRef.getTarget() != null )
 		{
 			QName targetQName = schemaRef.getTargetQName();
+			xnode refNode = new xnode(targetQName.getLocalPart());
+			refNode.setPath(parent.getPath());
+			parent.addChild(refNode);
 			XmlSchemaElement xmlSchemaElement = xelements.get(targetQName);
-			return crawlElement(parent, xmlSchemaElement);
+			return crawlElement(refNode, xmlSchemaElement);
 		}
 
+		String type=null;
 		XmlSchemaType schemaType = element.getSchemaType();
 		if( schemaType != null )
-			processComplexType(parent, schemaType);
+		{
+			if( schemaType instanceof XmlSchemaComplexType )
+				processComplexType(parent, (XmlSchemaComplexType)schemaType);
+			else
+				type = getPrimitiveTypeName((XmlSchemaSimpleType)schemaType);
+		}
 
 		String name = element.getName();
 		if( name != null )
@@ -127,6 +158,7 @@ public class WsdlDistiller
 			child = new xelement(name);
 			child.setPath(parent.getPath());
 			child.setCardinality(element.getMinOccurs(), element.getMaxOccurs());
+			child.setType(type);
 			parent.addChild(child);
 
 			return child;
@@ -135,42 +167,36 @@ public class WsdlDistiller
 		throw new RuntimeException("crawlElement() must return a non-null node!");
 	}
 
-	void processComplexType( xnode node, XmlSchemaType type)
+	void processComplexType( xnode node, XmlSchemaComplexType complexType)
 	{
-		/*
-		 * TODO: extension
-		 */
-		if( type instanceof XmlSchemaComplexType )
+		QName baseTypeName = complexType.getBaseSchemaTypeName();
+		if( baseTypeName!=null)
 		{
-			XmlSchemaComplexType complexType = (XmlSchemaComplexType)type;
-			QName baseTypeName = complexType.getBaseSchemaTypeName();
-			if( baseTypeName!=null)
-			{
-				XmlSchemaElement se = xelements.get(baseTypeName);
-				XmlSchemaType schemaType = se.getSchemaType();
-				if( schemaType!=null)
-					processComplexType(node, schemaType);
-//				throw new RuntimeException("baseSchemaTypeName is not handled yet!");
-			}
-
-			/*
-			 * TODO: attributes
-			 */
-
-
-			XmlSchemaParticle particle = complexType.getParticle();
-			if( particle == null )
-				return;
-			else if(particle instanceof XmlSchemaGroupParticle)
-			{
-				xgroup group = processGroup(node, (XmlSchemaGroupParticle)particle);
-				node.addGroup(group);
-			}
+			XmlSchemaElement se = xelements.get(baseTypeName);
+			XmlSchemaType schemaType = se.getSchemaType();
+			if( schemaType!=null &&  schemaType instanceof XmlSchemaComplexType )
+				processComplexType(node, (XmlSchemaComplexType)schemaType);
 			else
-			{
-				throw new RuntimeException("Unsupported particle: "+particle.getClass().getName()+"!");
+				throw new RuntimeException(baseTypeName+" is not handled yet!");
+		}
 
-			}
+		/*
+		 * TODO: attributes
+		 */
+
+
+		XmlSchemaParticle particle = complexType.getParticle();
+		if( particle == null )
+			return;
+		else if(particle instanceof XmlSchemaGroupParticle)
+		{
+			xgroup group = processGroup(node, (XmlSchemaGroupParticle)particle);
+			node.addGroup(group);
+		}
+		else
+		{
+			throw new RuntimeException("Unsupported particle: "+particle.getClass().getName()+"!");
+
 		}
 	}
 
