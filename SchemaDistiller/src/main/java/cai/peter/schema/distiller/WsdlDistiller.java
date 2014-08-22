@@ -7,8 +7,6 @@
  ***********************************************/
 package cai.peter.schema.distiller;
 
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,13 +23,22 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.service.model.SchemaInfo;
 import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.wsdl11.WSDLServiceBuilder;
+import org.apache.log4j.Logger;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaAll;
+import org.apache.ws.commons.schema.XmlSchemaChoice;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaGroupParticle;
+import org.apache.ws.commons.schema.XmlSchemaObject;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.apache.ws.commons.schema.utils.XmlSchemaRef;
 
 import cai.peter.schema.model.xelement;
+import cai.peter.schema.model.xgroup;
 import cai.peter.schema.model.xnode;
 
 
@@ -84,7 +91,7 @@ public class WsdlDistiller
 				QName partElement = part.getElementName();
 				if( partElement!= null)
 				{
-					msgNode.addChild(processElement(xelements.get(partElement)));
+					crawlElement(msgNode, xelements.get(partElement));
 
 				}
 				QName partType = part.getTypeName();
@@ -99,19 +106,33 @@ public class WsdlDistiller
 		return result;
 	}
 
-	xnode processElement(XmlSchemaElement element)
+	xnode crawlElement(xnode parent, XmlSchemaElement element)
 	{
-		String name = element.getName();
-		xelement el = new xelement(name);
-		el.setCardinality(element.getMinOccurs(), element.getMaxOccurs());
-		/*
-		 * TODO
-		 */
+		xelement child = null;
 		XmlSchemaRef<XmlSchemaElement> schemaRef = element.getRef();
-
+		if( schemaRef.getTarget() != null )
+		{
+			QName targetQName = schemaRef.getTargetQName();
+			XmlSchemaElement xmlSchemaElement = xelements.get(targetQName);
+			return crawlElement(parent, xmlSchemaElement);
+		}
 
 		XmlSchemaType schemaType = element.getSchemaType();
-		return el;
+		if( schemaType != null )
+			processComplexType(parent, schemaType);
+
+		String name = element.getName();
+		if( name != null )
+		{
+			child = new xelement(name);
+			child.setPath(parent.getPath());
+			child.setCardinality(element.getMinOccurs(), element.getMaxOccurs());
+			parent.addChild(child);
+
+			return child;
+		}
+
+		throw new RuntimeException("crawlElement() must return a non-null node!");
 	}
 
 	void processComplexType( xnode node, XmlSchemaType type)
@@ -121,10 +142,105 @@ public class WsdlDistiller
 		 */
 		if( type instanceof XmlSchemaComplexType )
 		{
-			QName baseSchemaTypeName = ((XmlSchemaComplexType)type).getBaseSchemaTypeName();
+			XmlSchemaComplexType complexType = (XmlSchemaComplexType)type;
+			QName baseTypeName = complexType.getBaseSchemaTypeName();
+			if( baseTypeName!=null)
+			{
+				XmlSchemaElement se = xelements.get(baseTypeName);
+				XmlSchemaType schemaType = se.getSchemaType();
+				if( schemaType!=null)
+					processComplexType(node, schemaType);
+//				throw new RuntimeException("baseSchemaTypeName is not handled yet!");
+			}
+
+			/*
+			 * TODO: attributes
+			 */
+
+
+			XmlSchemaParticle particle = complexType.getParticle();
+			if( particle == null )
+				return;
+			else if(particle instanceof XmlSchemaGroupParticle)
+			{
+				xgroup group = processGroup(node, (XmlSchemaGroupParticle)particle);
+				node.addGroup(group);
+			}
+			else
+			{
+				throw new RuntimeException("Unsupported particle: "+particle.getClass().getName()+"!");
+
+			}
 		}
+	}
 
+	void processGroupParticle(XmlSchemaObject item, xgroup parentGroup, xnode parent)
+	{
+		if( item instanceof XmlSchemaGroupParticle)
+			parentGroup.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
+		else if (item instanceof XmlSchemaElement)
+		{
+			xnode element = crawlElement(parent, (XmlSchemaElement)item);
+			parentGroup.addItem(element.getName());
+		}
+		else
+			throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
 
+	}
+
+	xgroup processGroup( xnode parent, XmlSchemaGroupParticle group)
+	{
+		xgroup result = new xgroup("sequence");
+		parent.addGroup(result);
+		if(group instanceof XmlSchemaSequence)
+		{
+			List<XmlSchemaSequenceMember> items = ((XmlSchemaSequence)group).getItems();
+			for(XmlSchemaSequenceMember it : items)
+			{
+				XmlSchemaObject item = (XmlSchemaObject)it;
+					if( item instanceof XmlSchemaGroupParticle)
+						result.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
+					else if (item instanceof XmlSchemaElement)
+					{
+						xnode element = crawlElement(parent, (XmlSchemaElement)item);
+						result.addItem(element.getName());
+					}
+					else
+						throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
+			}
+		}
+		else if (group instanceof XmlSchemaChoice)
+		{
+			result.setOrder("choice");
+			List<XmlSchemaObject> items = ((XmlSchemaChoice)group).getItems();
+			for( XmlSchemaObject item : items )
+			{
+				if( item instanceof XmlSchemaGroupParticle)
+					result.addGroup(processGroup(parent, (XmlSchemaGroupParticle)item));
+				else if (item instanceof XmlSchemaElement)
+				{
+					xnode element = crawlElement(parent, (XmlSchemaElement)item);
+					result.addItem(element.getName());
+				}
+				else
+					throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
+
+			}
+
+		}
+		else if (group instanceof XmlSchemaAll)
+		{
+			result.setOrder("all");
+			List<XmlSchemaElement> items = ((XmlSchemaAll)group).getItems();
+			for(XmlSchemaElement item : items)
+			{
+				xnode element = crawlElement(parent, item);
+				result.addItem(element.getName());
+
+			}
+
+		}
+		return result;
 	}
 
 	/*

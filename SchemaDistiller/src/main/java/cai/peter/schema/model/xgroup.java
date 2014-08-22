@@ -14,7 +14,7 @@ public class xgroup
 {
 	protected String path;
 	protected String order;
-	protected List<String> items = new ArrayList<String>();
+	protected List<String> nodes = new ArrayList<String>();
 	protected List<xgroup> groups = new ArrayList<xgroup>();
 	public xgroup(String order)
 	{
@@ -32,7 +32,7 @@ public class xgroup
 	{
 		String result = null;
 
-		if(items.size()>1)
+		if(nodes.size()>1)
 		{
 			StringBuilder s = new StringBuilder();
 
@@ -41,14 +41,14 @@ public class xgroup
 			case "choice":
 				s.append(path);
 				s.append("/(");
-				Joiner.on("|").appendTo(s, items);
+				Joiner.on("|").appendTo(s, nodes);
 				s.append(")");
 				result = s.toString();
 				break;
 			case "all":
 				s.append(path);
 				s.append("/<");
-				Joiner.on("|").appendTo(s, items);
+				Joiner.on("|").appendTo(s, nodes);
 				s.append(">");
 				result = s.toString();
 				break;
@@ -61,20 +61,30 @@ public class xgroup
 	{
 		return groups;
 	}
-	
+
 	public void addGroup(xgroup group)
 	{
 		groups.add(group);
 	}
 
-	public List<String> getItems()
+	public List<String> getNodes()
 	{
-		return items;
+		return nodes;
 	}
-	
+
 	public void addItem(String item)
 	{
-		items.add(item);
+		nodes.add(item);
+	}
+
+	public String getOrder()
+	{
+		return order;
+	}
+
+	public void setOrder(String order)
+	{
+		this.order = order;
 	}
 
 }
