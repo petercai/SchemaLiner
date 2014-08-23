@@ -23,12 +23,11 @@ import org.exolab.castor.xml.schema.XMLType;
 import cai.peter.schema.model.xattribute;
 import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xgroup;
-import cai.peter.schema.model.xnode;
 
 public class XsdDistiller
 {
 
-	public xnode processElement(final ElementDecl elementDecl, final String path) throws Exception
+	public xelement processElement(final ElementDecl elementDecl, final String path) throws Exception
 	{
 		xelement node = new xelement(elementDecl.getName());
 		node.setPath(path);
@@ -76,7 +75,7 @@ public class XsdDistiller
 		}
 	}
 
-	public void processComplexType(xnode node, ComplexType complexType) throws Exception
+	public void processComplexType(xelement node, ComplexType complexType) throws Exception
 	{
 		/*
 		 * handle xsd:extension first
@@ -125,7 +124,7 @@ public class XsdDistiller
 		}
 	}
 
-	private void processTypeAttributes(xnode node, ComplexType complexType)
+	private void processTypeAttributes(xelement node, ComplexType complexType)
 	{
 		Enumeration<?> attributes = complexType.getAttributeDecls();
 		while (attributes.hasMoreElements())
@@ -137,7 +136,7 @@ public class XsdDistiller
 		}
 	}
 
-	private xgroup processGroup(xnode container, final Group group) throws Exception
+	private xgroup processGroup(xelement container, final Group group) throws Exception
 	{
 		xgroup result = new xgroup(group.getOrder().name());
 		container.addGroup(result);
@@ -152,13 +151,13 @@ public class XsdDistiller
 			}
 			else if (particle instanceof ElementDecl )
 			{
-				xnode element = processElement((ElementDecl)particle, container.getPath());
+				xelement element = processElement((ElementDecl)particle, container.getPath());
 				container.addChild(element);
 				result.addNode(element);
 			}
 			else if( particle instanceof Wildcard )
 			{
-				xnode node = processWildard((Wildcard) particle);
+				xelement node = processWildard((Wildcard) particle);
 				container.addChild(node);
 				result.addNode(node);
 
@@ -172,18 +171,18 @@ public class XsdDistiller
 		return result;
 	}
 
-	xnode processWildard(Wildcard content)
+	xelement processWildard(Wildcard content)
 	{
-		xnode result = new xnode(content.getProcessContent());
+		xelement result = new xelement(content.getProcessContent());
 		result.setCardinality(content.getMinOccurs(),
 		                      content.getMaxOccurs());
 		return result;
 	}
 
 
-	public List<xnode> processElements(Schema schema) throws Exception
+	public List<xelement> processElements(Schema schema) throws Exception
 	{
-		List<xnode> result = new ArrayList<xnode>();
+		List<xelement> result = new ArrayList<xelement>();
 		Collection<ElementDecl> elementDecls = schema.getElementDecls();
 		for (ElementDecl e : elementDecls)
 		{

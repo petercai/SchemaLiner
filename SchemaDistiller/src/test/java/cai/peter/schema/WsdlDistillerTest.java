@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cai.peter.schema.distiller.WsdlDistiller;
+import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xnode;
 
 public class WsdlDistillerTest
@@ -53,13 +54,13 @@ public class WsdlDistillerTest
 		logElement(wsdldistiller.processDefinitions(defs));
 	}
 
-	void logElement(List<xnode> nodes)
+	void logElement(List<xelement> nodes)
 	{
 		if( nodes == null ) return;
-		for( xnode node : nodes)
+		for( xelement node : nodes)
 		{
 			logger.info(node);
-			logElement(node.getChildren());
+			logElement(node.getItems());
 		}
 	}
 
