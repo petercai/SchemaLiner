@@ -114,6 +114,7 @@ public class SchemaTransformer
 
 	protected static void transformXsd(File xsdFile) throws Exception
 	{
+		System.out.println(xsdFile.toString());
 		Schema schema = CastorUtil.getSchema(xsdFile);
 		XsdDistiller distiller = new XsdDistiller();
 		List<xelement> elements = distiller.processElements(schema);

@@ -28,7 +28,8 @@ public class XsdDistillerTest
 	 * Logger for this class
 	 */
 	private static final Logger	logger	= Logger.getLogger(XsdDistillerTest.class);
-	String xsdfile = "Services/External/CustomerAccountingUnitServiceIntf.xsd";
+//	String xsdfile = "Services/External/CustomerAccountingUnitServiceIntf.xsd";
+	String xsdfile = "at_wsdl/wsdl/Schemas/Services/Internal/ResourceManagement.xsd";
 	private Schema	schema;
 	private XsdDistiller	xsddistiller;
 	@Before

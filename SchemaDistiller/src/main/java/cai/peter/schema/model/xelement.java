@@ -128,4 +128,11 @@ public class xelement extends xnode
 		}
 		return result;
 	}
+
+	@Override
+	public void addGroup(xgroup group)
+	{
+		super.addGroup(group);
+		group.setPath(getPath());
+	}
 }
