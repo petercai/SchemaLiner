@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import cai.peter.schema.distiller.XsdDistiller;
 import cai.peter.schema.model.xelement;
+import cai.peter.schema.model.xnode;
 
 public class XsdDistillerTest
 {

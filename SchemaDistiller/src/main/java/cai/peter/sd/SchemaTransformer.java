@@ -23,6 +23,7 @@ import cai.peter.schema.distiller.WsdlDistiller;
 import cai.peter.schema.distiller.XsdDistiller;
 import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xgroup;
+import cai.peter.schema.model.xnode;
 
 public class SchemaTransformer
 {
@@ -49,7 +50,7 @@ public class SchemaTransformer
 		}
 	}
 
-	protected void transform(xelement root) throws IOException
+	protected void transform(xnode root) throws IOException
 	{
 		if( !root.getName().isEmpty())
 		{
@@ -62,7 +63,7 @@ public class SchemaTransformer
 				transform(group);
 		}
 
-		for( xelement node : root.getItems())
+		for( xnode node : root.getItems())
 		{
 			transform(node);
 		}
@@ -120,7 +121,7 @@ public class SchemaTransformer
 		List<xelement> elements = distiller.processElements(schema);
 
 		SchemaTransformer allInOneFile = new SchemaTransformer(new File(xsdFile.toString()+".all"));
-		for( xelement node : elements)
+		for( xnode node : elements)
 		{
 			allInOneFile.transform(node);
 			String name = node.getName();
@@ -144,7 +145,7 @@ public class SchemaTransformer
 		List<xelement> elements = distiller.processDefinitions(defs);
 
 		SchemaTransformer allInOneFile = new SchemaTransformer(new File(wsdlFile.toString()+".messages"));
-		for( xelement node : elements)
+		for( xnode node : elements)
 		{
 			allInOneFile.transform(node);
 			String name = node.getName();

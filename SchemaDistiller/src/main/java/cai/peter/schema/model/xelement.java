@@ -13,7 +13,6 @@ public class xelement extends xnode
 {
 	protected String type;
 	public String rangeFrom,rangeTo;
-	protected String	path;
 	protected String	ns;
 	protected String	cardinality	= "";
 	protected List<xattribute>	attributes	= new ArrayList<xattribute>();
@@ -106,16 +105,11 @@ public class xelement extends xnode
 		return attributes;
 	}
 
-	public void setPath(String path)
-	{
-		this.path = path;
-	}
-
 	@Override
 	public void addItem(xnode child)
 	{
 		super.addItem(child);
-		((xelement)child).setPath(getPath());
+		((xnode)child).setPath(getPath());
 	}
 
 	@Override

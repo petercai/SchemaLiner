@@ -7,11 +7,12 @@ package cai.peter.schema.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class xnode
+public abstract class xnode
 {
 	protected List<xnode>		items	= new ArrayList<xnode>();
 	protected List<xgroup>		groups		= new ArrayList<xgroup>();
 	protected String	name;
+	protected String	path;
 	
 
 
@@ -65,5 +66,12 @@ public class xnode
 	public String getName()
 	{
 		return name;
+	}
+	
+	abstract String getPath();
+
+	public void setPath(String path)
+	{
+		this.path = path;
 	}
 }

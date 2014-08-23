@@ -87,7 +87,7 @@ public class WsdlDistiller
 				QName partElement = part.getElementName();
 				if( partElement!= null)
 				{
-					crawlElement(msgNode, xelements.get(partElement));
+					processElement(msgNode, xelements.get(partElement));
 
 				}
 				QName partType = part.getTypeName();
@@ -125,7 +125,7 @@ public class WsdlDistiller
 		return null;
 	}
 
-	xnode crawlElement(xelement parent, XmlSchemaElement element)
+	xnode processElement(xelement parent, XmlSchemaElement element)
 	{
 		xelement child = null;
 		String name = element.getName();
@@ -168,7 +168,7 @@ public class WsdlDistiller
 			refNode.setPath(parent.getPath());
 			parent.addItem(refNode);
 			XmlSchemaElement xmlSchemaElement = xelements.get(targetQName);
-			return crawlElement(refNode, xmlSchemaElement);
+			return processElement(refNode, xmlSchemaElement);
 		}
 
 //		if( schemaType != null )
@@ -222,7 +222,7 @@ public class WsdlDistiller
 		}
 		else if (item instanceof XmlSchemaElement)
 		{
-			xnode element= crawlElement(parent, (XmlSchemaElement)item);
+			xnode element= processElement(parent, (XmlSchemaElement)item);
 			parentGroup.addItem(element);
 		}
 		else
@@ -259,7 +259,7 @@ public class WsdlDistiller
 			List<XmlSchemaElement> items = ((XmlSchemaAll)group).getItems();
 			for(XmlSchemaElement item : items)
 			{
-				xnode element = crawlElement(parent, item);
+				xnode element = processElement(parent, item);
 				result.addItem(element);
 
 			}

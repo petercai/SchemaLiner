@@ -23,6 +23,7 @@ import org.exolab.castor.xml.schema.XMLType;
 import cai.peter.schema.model.xattribute;
 import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xgroup;
+import cai.peter.schema.model.xnode;
 
 public class XsdDistiller
 {
@@ -151,13 +152,13 @@ public class XsdDistiller
 			}
 			else if (particle instanceof ElementDecl )
 			{
-				xelement element = processElement((ElementDecl)particle, container.getPath());
+				xnode element = processElement((ElementDecl)particle, container.getPath());
 				container.addItem(element);
 				result.addItem(element);
 			}
 			else if( particle instanceof Wildcard )
 			{
-				xelement node = processWildard((Wildcard) particle);
+				xnode node = processWildard((Wildcard) particle);
 				container.addItem(node);
 				result.addItem(node);
 
@@ -171,7 +172,7 @@ public class XsdDistiller
 		return result;
 	}
 
-	xelement processWildard(Wildcard content)
+	xnode processWildard(Wildcard content)
 	{
 		xelement result = new xelement(content.getProcessContent());
 		result.setCardinality(content.getMinOccurs(),
