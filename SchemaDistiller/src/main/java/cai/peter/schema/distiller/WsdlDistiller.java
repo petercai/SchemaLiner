@@ -154,7 +154,7 @@ public class WsdlDistiller
 				child = new xelement(name);
 				child.setPath(parent.getPath());
 				child.setCardinality(element.getMinOccurs(), element.getMaxOccurs());
-				parent.addChild(child);
+				parent.addItem(child);
 
 				parent = child;
 			}
@@ -166,7 +166,7 @@ public class WsdlDistiller
 			QName targetQName = element.getRef().getTargetQName();
 			xelement refNode = new xelement(targetQName.getLocalPart());
 			refNode.setPath(parent.getPath());
-			parent.addChild(refNode);
+			parent.addItem(refNode);
 			XmlSchemaElement xmlSchemaElement = xelements.get(targetQName);
 			return crawlElement(refNode, xmlSchemaElement);
 		}
@@ -223,7 +223,7 @@ public class WsdlDistiller
 		else if (item instanceof XmlSchemaElement)
 		{
 			xnode element= crawlElement(parent, (XmlSchemaElement)item);
-			parentGroup.addNode(element);
+			parentGroup.addItem(element);
 		}
 		else
 			throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
@@ -260,7 +260,7 @@ public class WsdlDistiller
 			for(XmlSchemaElement item : items)
 			{
 				xnode element = crawlElement(parent, item);
-				result.addNode(element);
+				result.addItem(element);
 
 			}
 

@@ -28,7 +28,7 @@ public class xnode
 //		this.name = name;
 //	}
 
-	public void addChild( xnode child)
+	public void addItem( xnode child)
 	{
 		items.add(child);
 //		child.setPath(getPath());

@@ -9,15 +9,15 @@ import java.util.List;
 
 import com.google.common.base.Joiner;
 
-public class xgroup
+public class xgroup extends xnode
 {
 	protected String path;
 	protected String order;
-	protected List<xnode> nodes = new ArrayList<xnode>();
-	protected List<xgroup> groups = new ArrayList<xgroup>();
+//	protected List<xnode> items = new ArrayList<xnode>();
+//	protected List<xgroup> groups = new ArrayList<xgroup>();
 	public xgroup(String order)
 	{
-		super();
+		super(null);
 		this.order = order;
 	}
 
@@ -41,7 +41,7 @@ public class xgroup
 	{
 		String result = null;
 
-		if(nodes.size()>1)
+		if(items.size()>1)
 		{
 			StringBuilder s = new StringBuilder();
 
@@ -50,40 +50,20 @@ public class xgroup
 			case "choice":
 				s.append(path);
 				s.append("/(");
-				Joiner.on("|").appendTo(s, toStringList(nodes));
+				Joiner.on("|").appendTo(s, toStringList(items));
 				s.append(")");
 				result = s.toString();
 				break;
 			case "all":
 				s.append(path);
 				s.append("/<");
-				Joiner.on("|").appendTo(s, toStringList(nodes));
+				Joiner.on("|").appendTo(s, toStringList(items));
 				s.append(">");
 				result = s.toString();
 				break;
 			}
 		}
 		return result;
-	}
-
-	public List<xgroup> getGroups()
-	{
-		return groups;
-	}
-
-	public void addGroup(xgroup group)
-	{
-		groups.add(group);
-	}
-
-	public List<xnode> getNodes()
-	{
-		return nodes;
-	}
-
-	public void addNode(xnode item)
-	{
-		nodes.add(item);
 	}
 
 	public String getOrder()

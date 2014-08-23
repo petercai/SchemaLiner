@@ -112,9 +112,9 @@ public class xelement extends xnode
 	}
 
 	@Override
-	public void addChild(xnode child)
+	public void addItem(xnode child)
 	{
-		super.addChild(child);
+		super.addItem(child);
 		((xelement)child).setPath(getPath());
 	}
 

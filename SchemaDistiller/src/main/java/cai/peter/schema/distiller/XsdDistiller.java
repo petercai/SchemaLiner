@@ -152,14 +152,14 @@ public class XsdDistiller
 			else if (particle instanceof ElementDecl )
 			{
 				xelement element = processElement((ElementDecl)particle, container.getPath());
-				container.addChild(element);
-				result.addNode(element);
+				container.addItem(element);
+				result.addItem(element);
 			}
 			else if( particle instanceof Wildcard )
 			{
 				xelement node = processWildard((Wildcard) particle);
-				container.addChild(node);
-				result.addNode(node);
+				container.addItem(node);
+				result.addItem(node);
 
 			}
 			else
