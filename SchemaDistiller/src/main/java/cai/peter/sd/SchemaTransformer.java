@@ -34,34 +34,34 @@ public class SchemaTransformer
 		bufferedWriter = new BufferedWriter(new FileWriter(outputFile));
 	}
 
-	protected void transform(xgroup group) throws IOException
-	{
-		String line = group.toString();
-		if( line != null )
-		{
-			bufferedWriter.append(line);
-			bufferedWriter.append(System.getProperty("line.separator"));
-		}
-		List<xgroup> groups = group.getGroups();
-		if( !groups.isEmpty())
-		{
-			for( xgroup subgroup : groups)
-				transform(subgroup);
-		}
-	}
+//	protected void transform(xgroup group) throws IOException
+//	{
+//		String line = group.toString();
+//		if( line != null )
+//		{
+//			bufferedWriter.append(line);
+//			bufferedWriter.append(System.getProperty("line.separator"));
+//		}
+//		List<xgroup> groups = group.getGroups();
+//		if( !groups.isEmpty())
+//		{
+//			for( xgroup subgroup : groups)
+//				transform(subgroup);
+//		}
+//	}
 
 	protected void transform(xnode root) throws IOException
 	{
-		if( !root.getName().isEmpty())
+		if( /*!root.getName().isEmpty() &&*/ root.toString()!=null)
 		{
 			bufferedWriter.append(root.toString());
 			bufferedWriter.append(System.getProperty("line.separator"));
 		}
 
-		for( xgroup group: root.getGroups())
-		{
-				transform(group);
-		}
+//		for( xgroup group: root.getGroups())
+//		{
+//				transform(group);
+//		}
 
 		for( xnode node : root.getItems())
 		{
@@ -118,7 +118,7 @@ public class SchemaTransformer
 		System.out.println(xsdFile.toString());
 		Schema schema = CastorUtil.getSchema(xsdFile);
 		XsdDistiller distiller = new XsdDistiller();
-		List<xelement> elements = distiller.processElements(schema);
+		List<xnode> elements = distiller.processElements(schema);
 
 		SchemaTransformer allInOneFile = new SchemaTransformer(new File(xsdFile.toString()+".all"));
 		for( xnode node : elements)
@@ -142,7 +142,7 @@ public class SchemaTransformer
 		Bus bus = BusFactory.getDefaultBus();
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
 		Definition defs = wsdlManager.getDefinition(wsdlFile.toURI().toURL());
-		List<xelement> elements = distiller.processDefinitions(defs);
+		List<xnode> elements = distiller.processDefinitions(defs);
 
 		SchemaTransformer allInOneFile = new SchemaTransformer(new File(wsdlFile.toString()+".messages"));
 		for( xnode node : elements)

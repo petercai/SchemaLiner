@@ -71,9 +71,20 @@ public class xgroup extends xnode
 	}
 
 	@Override
-	String getPath()
+	public String getPath()
 	{
 		return path;
 	}
+
+//	@Override
+//	public List<xelement> getItems()
+//	{
+//		ArrayList<xelement> result = new ArrayList<xelement>(items.size());
+//		for( xnode n : items)
+//		{
+//			result.add((xelement)n);
+//		}
+//		return result;
+//	}
 
 }

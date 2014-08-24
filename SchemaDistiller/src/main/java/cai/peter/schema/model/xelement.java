@@ -34,7 +34,7 @@ public class xelement extends xnode
 		s.append(path==null?"/":path);
 		if( path !=null )
 			s.append("/");
-		s.append(name);
+		s.append(getQName());
 		s.append(cardinality);
 		s.append(type==null?"":":"+type);
 		if( rangeFrom!=null || rangeTo != null)
@@ -105,28 +105,28 @@ public class xelement extends xnode
 		return attributes;
 	}
 
-	@Override
-	public void addItem(xnode child)
-	{
-		super.addItem(child);
-		((xnode)child).setPath(getPath());
-	}
+//	@Override
+//	public void addItem(xnode child)
+//	{
+//		super.addItem(child);
+//		((xnode)child).setPath(getPath());
+//	}
 
-	@Override
-	public List<xelement> getItems()
-	{
-		ArrayList<xelement> result = new ArrayList<xelement>(items.size());
-		for( xnode n : items)
-		{
-			result.add((xelement)n);
-		}
-		return result;
-	}
+//	@Override
+//	public List<xelement> getItems()
+//	{
+//		ArrayList<xelement> result = new ArrayList<xelement>(items.size());
+//		for( xnode n : items)
+//		{
+//			result.add((xelement)n);
+//		}
+//		return result;
+//	}
 
-	@Override
-	public void addGroup(xgroup group)
-	{
-		super.addGroup(group);
-		group.setPath(getPath());
-	}
+//	@Override
+//	public void addGroup(xgroup group)
+//	{
+//		super.addGroup(group);
+//		group.setPath(getPath());
+//	}
 }

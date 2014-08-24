@@ -140,7 +140,8 @@ public class XsdDistiller
 	private xgroup processGroup(xelement container, final Group group) throws Exception
 	{
 		xgroup result = new xgroup(group.getOrder().name());
-		container.addGroup(result);
+		result.setPath(container.getPath());
+		container.addItem(result);
 
 		Enumeration<Annotated> particles = group.enumerate();
 		while (particles.hasMoreElements())
@@ -148,7 +149,7 @@ public class XsdDistiller
 			Object particle = particles.nextElement();
 			if (particle instanceof Group)
 			{
-				result.addGroup(processGroup(container, (Group)particle));
+				result.addItem(processGroup(container, (Group)particle));
 			}
 			else if (particle instanceof ElementDecl )
 			{
@@ -181,9 +182,9 @@ public class XsdDistiller
 	}
 
 
-	public List<xelement> processElements(Schema schema) throws Exception
+	public List<xnode> processElements(Schema schema) throws Exception
 	{
-		List<xelement> result = new ArrayList<xelement>();
+		List<xnode> result = new ArrayList<xnode>();
 		Collection<ElementDecl> elementDecls = schema.getElementDecls();
 		for (ElementDecl e : elementDecls)
 		{

@@ -30,7 +30,8 @@ public class XsdDistillerTest
 	 */
 	private static final Logger	logger	= Logger.getLogger(XsdDistillerTest.class);
 //	String xsdfile = "Services/External/CustomerAccountingUnitServiceIntf.xsd";
-	String xsdfile = "at_wsdl/wsdl/Schemas/Services/Internal/ResourceManagement.xsd";
+//	String xsdfile = "at_wsdl/wsdl/Schemas/Services/Internal/ResourceManagement.xsd";
+	String xsdfile = "at_wsdl/wsdl/Schemas/Services/Internal/AccountFacility.xsd";
 	private Schema	schema;
 	private XsdDistiller	xsddistiller;
 	@Before
@@ -52,12 +53,13 @@ public class XsdDistillerTest
 				);
 	}
 
-	void logElement(List<xelement> nodes)
+	void logElement(List<xnode> nodes)
 	{
 		if( nodes == null ) return;
-		for( xelement node : nodes)
+		for( xnode node : nodes)
 		{
-			logger.info(node);
+			if( node.toString()!=null)
+				logger.info(node);
 			logElement(node.getItems());
 		}
 	}
