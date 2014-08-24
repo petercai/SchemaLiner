@@ -122,20 +122,39 @@ public class WsdlDistiller
 	public TypeInfo getPrimitiveTypeName(XmlSchemaSimpleType simpleType)
 	{
 		TypeInfo typeInfo=null;
-		String name = simpleType.getName();
-		if( name !=null )
+		String ns=null;
+		QName qName = simpleType.getQName();
+		if( qName !=null )
+		{
+			ns = qName.getNamespaceURI();
+			String name = qName.getLocalPart();
 			typeInfo = new TypeInfo(name);
+		}
 //		XmlSchemaDerivationMethod deriveBy = simpleType.getDeriveBy();
 		XmlSchemaSimpleTypeContent content = simpleType.getContent();
 		if( content instanceof XmlSchemaSimpleTypeRestriction)
 		{
 			XmlSchemaSimpleTypeRestriction typeRestriction = (XmlSchemaSimpleTypeRestriction)content;
-			XmlSchemaSimpleType baseType = typeRestriction.getBaseType();
-			if( typeInfo == null )
-				typeInfo = new TypeInfo(typeRestriction.getBaseTypeName().getLocalPart());
+			if( !"http://www.w3.org/2001/XMLSchema".equals(ns) )
+			{
+				XmlSchemaSimpleType baseType = typeRestriction.getBaseType();
+				if( baseType!=null )
+					return getPrimitiveTypeName(baseType);
+				else
+				{
+					String baseTypeName = typeRestriction.getBaseTypeName().getLocalPart();
+					if (baseTypeName != null)
+					{
+						if( typeInfo==null)
+							typeInfo = new TypeInfo(baseTypeName);
+						else
+							typeInfo.setName(baseTypeName);
+					}
+				}
+			}
 //			if( baseType != null)
 //				return getPrimitiveTypeName(baseType);
-//			else
+//			else 
 			{
 				for( XmlSchemaFacet facet : typeRestriction.getFacets() )
 				{
@@ -152,6 +171,9 @@ public class WsdlDistiller
 					case XmlSchemaMinLengthFacet:
 					case XmlSchemaTotalDigitsFacet:
 						typeInfo.setMin(value);
+						break;
+					case XmlSchemaEnumerationFacet:
+						typeInfo.addEnumeration(value);
 						break;
 					default:
 						break;
