@@ -6,6 +6,13 @@
  *
  ***********************************************/
 package cai.peter.schema.distiller;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,7 +28,6 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
-import org.apache.commons.collections.iterators.EntrySetMapIterator;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.service.model.SchemaInfo;
 import org.apache.cxf.service.model.ServiceInfo;
@@ -29,8 +35,10 @@ import org.apache.cxf.wsdl11.WSDLServiceBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaAll;
 import org.apache.ws.commons.schema.XmlSchemaChoice;
+import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaFacet;
 import org.apache.ws.commons.schema.XmlSchemaGroupParticle;
 import org.apache.ws.commons.schema.XmlSchemaObject;
@@ -68,6 +76,18 @@ public class WsdlDistiller
 		XmlSchemaTotalDigitsFacet;
 	}
 	
+	Map<String, XmlSchemaElement> reindexSchema(Map<QName, XmlSchemaElement> source)
+	{
+		Map<String, XmlSchemaElement> nameLookup = new HashMap<String, XmlSchemaElement>();
+		for(Map.Entry<QName, XmlSchemaElement> entry: source.entrySet())
+		{
+			QName key = entry.getKey();
+			XmlSchemaElement value = entry.getValue();
+			nameLookup.put(key.getLocalPart(), value);
+		}
+		return nameLookup;
+	}
+
 	void processSchemas(Definition defs)
 	{
 		WSDLServiceBuilder wsdlServiceBuilder = new WSDLServiceBuilder(BusFactory.getDefaultBus());
@@ -78,18 +98,50 @@ public class WsdlDistiller
 			for( SchemaInfo schemaInfo : schemas )
 			{
 				XmlSchema schema = schemaInfo.getSchema();
-				Map<QName, XmlSchemaElement> elements = schema.getElements();
-				qNameLookup.putAll(elements);
-				for(Map.Entry<QName, XmlSchemaElement> entry: elements.entrySet())
+//				populateSchema(qNameLookup, schema);
+				qNameLookup.putAll(schema.getElements());
+			}
+		}
+		nameLookup = reindexSchema(qNameLookup);
+	}
+	
+	void populateSchema(Map<QName, XmlSchemaElement> lookup, XmlSchema schema)
+	{
+		if( schema == null ) return;
+		lookup.putAll(schema.getElements());
+		List<XmlSchemaExternal> externals = schema.getExternals();
+		if( externals == null || externals.size()==0) return;
+		try
+		{
+			String sourceURI = schema.getSourceURI();
+			String path = new URI(sourceURI).getPath();
+			File sourceFile = new File(path);
+			for(XmlSchemaExternal ext : externals)
+			{
+				String schemaLocation = ext.getSchemaLocation();
+				File schemaFile = new File(sourceFile.getParent(), schemaLocation);
+				try
 				{
-					QName key = entry.getKey();
-					XmlSchemaElement value = entry.getValue();
-					nameLookup.put(key.getLocalPart(), value);
+					if( schemaFile.exists())
+					{
+						InputStream is = new FileInputStream(schemaFile);
+						XmlSchemaCollection schemaCol = new XmlSchemaCollection();
+						InputStreamReader inputStreamReader = new InputStreamReader(is);
+						XmlSchema child = schemaCol.read(inputStreamReader);
+						lookup.putAll(child.getElements());
+						populateSchema(lookup, child);
+					}
+				}
+				catch (FileNotFoundException e)
+				{
+					e.printStackTrace();
 				}
 			}
-
 		}
-
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public List<xnode> processDefinitions(Definition defs)
@@ -183,7 +235,6 @@ public class WsdlDistiller
 			String name = qName.getLocalPart();
 			typeInfo = new TypeInfo(name);
 		}
-//		XmlSchemaDerivationMethod deriveBy = simpleType.getDeriveBy();
 		XmlSchemaSimpleTypeContent content = simpleType.getContent();
 		if( content instanceof XmlSchemaSimpleTypeRestriction)
 		{
@@ -205,33 +256,26 @@ public class WsdlDistiller
 					}
 				}
 			}
-//			if( baseType != null)
-//				return getPrimitiveTypeName(baseType);
-//			else 
+			for( XmlSchemaFacet facet : typeRestriction.getFacets() )
 			{
-				for( XmlSchemaFacet facet : typeRestriction.getFacets() )
+				CLAZZ clazz = CLAZZ.valueOf(facet.getClass().getSimpleName());
+				String value = String.valueOf(facet.getValue());
+				switch(clazz)
 				{
-					CLAZZ clazz = CLAZZ.valueOf(facet.getClass().getSimpleName());
-//					if( facet instanceof XmlSchemaMaxLengthFacet)
-//					{}
-					String value = String.valueOf(facet.getValue());
-					switch(clazz)
-					{
-					case XmlSchemaMaxLengthFacet:
-					case XmlSchemaFractionDigitsFacet:
-						typeInfo.setMax(value);
-						break;
-					case XmlSchemaMinLengthFacet:
-					case XmlSchemaTotalDigitsFacet:
-						typeInfo.setMin(value);
-						break;
-					case XmlSchemaEnumerationFacet:
-						typeInfo.addEnumeration(value);
-						break;
-					default:
-						break;
-						
-					}
+				case XmlSchemaMaxLengthFacet:
+				case XmlSchemaFractionDigitsFacet:
+					typeInfo.setMax(value);
+					break;
+				case XmlSchemaMinLengthFacet:
+				case XmlSchemaTotalDigitsFacet:
+					typeInfo.setMin(value);
+					break;
+				case XmlSchemaEnumerationFacet:
+					typeInfo.addEnumeration(value);
+					break;
+				default:
+					break;
+					
 				}
 			}
 		}
