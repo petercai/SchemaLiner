@@ -137,7 +137,6 @@ public class SchemaTransformer
 	{
 		WsdlDistiller distiller = new WsdlDistiller();
 
-//		URL wsdlUrl = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
 
 		Bus bus = BusFactory.getDefaultBus();
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);

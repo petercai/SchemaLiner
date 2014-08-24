@@ -106,16 +106,16 @@ public class CXFWSDLParseTest {
 				out("    Operation Input Name: "
 				    + ((op.getInput().getName() != null) ? op.getInput().getName() : "not available!"));
 				out("    Operation Input Message: "
-				    + op.getInput().getMessage().getQName().getLocalPart());
+				    + op.getInput().getMessage().getQName()/*.getLocalPart()*/);
 				out("    Operation Output Name: "
 				    + ((op.getOutput().getName() != null) ? op.getOutput().getName() : "not available!"));
 				out("    Operation Output Message: "
-				    + op.getOutput().getMessage().getQName().getLocalPart());
+				    + op.getOutput().getMessage().getQName()/*.getLocalPart()*/);
 				out("    Operation Faults: ");
 				if (op.getFaults().size() > 0) {
 					for (Fault fault : (Collection<Fault>) op.getFaults().<Fault>values()) {
 						out("      Fault Name: " + fault.getName());
-						out("      Fault Message: " + fault.getMessage().getQName().getLocalPart());
+						out("      Fault Message: " + fault.getMessage().getQName()/*.getLocalPart()*/);
 					}
 				} else out("      There are no faults available!");
 
