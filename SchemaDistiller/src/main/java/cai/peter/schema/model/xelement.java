@@ -50,6 +50,13 @@ public class xelement extends xnode
 		this.type = type;
 	}
 
+	public void setTypeInfo( TypeInfo info)
+	{
+		this.type = info.getName();
+		this.rangeFrom = info.getMin();
+		this.rangeTo = info.getMax();
+	}
+	
 	public String getPath()
 	{
 		return path==null?("/"+getQName()):(path+"/"+getQName());
