@@ -3,6 +3,7 @@ package cai.peter.wsdl;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -24,6 +25,7 @@ import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.wsdl.WSDLManager;
 import org.apache.cxf.wsdl11.WSDLServiceBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.junit.Test;
 
 public class CXFWSDLParseTest {
@@ -31,8 +33,8 @@ public class CXFWSDLParseTest {
 	@Test
 	public void test() throws WSDLException
 	{
-		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
-//		URL wsdlUrl = this.getClass().getClassLoader().getResource("ebay/PayPalSvc.wsdl");
+//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
+		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferFull.wsdl");
 
 		Bus bus = BusFactory.getDefaultBus();
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
@@ -57,6 +59,14 @@ public class CXFWSDLParseTest {
 			{
 				XmlSchema schema = schemaInfo.getSchema();
 				out("  TargetNamespace: \t" + schema.getTargetNamespace());
+				Map<QName, XmlSchemaElement> elements = schema.getElements();
+				for(Map.Entry<QName, XmlSchemaElement> entry: elements.entrySet())
+				{
+					QName key = entry.getKey();
+					out("  \tXmlSchemaElement.QName: \t" + key.toString());
+					XmlSchemaElement value = entry.getValue();
+//					out(value.toString());
+				}
 			}
 
 		}
