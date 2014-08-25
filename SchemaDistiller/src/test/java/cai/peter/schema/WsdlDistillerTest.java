@@ -5,23 +5,18 @@
 
 package cai.peter.schema;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.wsdl.WSDLManager;
 import org.apache.log4j.Logger;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,8 +29,8 @@ public class WsdlDistillerTest
 	 * Logger for this class
 	 */
 	private static final Logger	logger	= Logger.getLogger(WsdlDistillerTest.class);
-	String wsdlfile = "at_wsdl/wsdl/AccountTransferHTTP.wsdl";
-//	String wsdlfile = "at_wsdl/wsdl/AccountTransferFull.wsdl";
+//	String wsdlfile = "at_wsdl/wsdl/AccountTransferHTTP.wsdl";
+	String wsdlfile = "at_wsdl/wsdl/AccountTransferFull.wsdl";
 //	String wsdlfile = "ebay/PayPalSvc.wsdl";
 	private WsdlDistiller	wsdldistiller = new WsdlDistiller();
 	private Definition	defs;
