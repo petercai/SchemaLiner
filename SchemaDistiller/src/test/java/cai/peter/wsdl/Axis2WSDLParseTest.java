@@ -1,8 +1,10 @@
 package cai.peter.wsdl;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -23,7 +25,11 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.service.model.SchemaInfo;
@@ -31,6 +37,7 @@ import org.apache.cxf.service.model.ServiceInfo;
 import org.apache.cxf.wsdl.WSDLManager;
 import org.apache.cxf.wsdl11.WSDLServiceBuilder;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.junit.Test;
 
 public class Axis2WSDLParseTest {
@@ -55,10 +62,10 @@ public class Axis2WSDLParseTest {
 
 	
 	@Test
-	public void test() throws WSDLException
+	public void test() throws WSDLException, AxisFault
 	{
-//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
-		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferFull.wsdl");
+		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
+//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferFull.wsdl");
 
 		Definition defs = readInTheWSDLFile(wsdlUrl.toString());
 
@@ -84,7 +91,26 @@ public class Axis2WSDLParseTest {
 //			}
 //
 //		}
-//		out("\n");
+		WSDL11ToAllAxisServicesBuilder builder;
+        builder = new WSDL11ToAllAxisServicesBuilder(defs);
+        List<AxisService> allServices = builder.populateAllServices();
+        for( AxisService service : allServices)
+        {
+        	ArrayList<XmlSchema> schemas = service.getSchema();
+        	for( XmlSchema schema : schemas )
+        	{
+				out("  TargetNamespace: \t" + schema.getTargetNamespace());
+				Map<QName, XmlSchemaElement> elements = schema.getElements();
+				for(Map.Entry<QName, XmlSchemaElement> entry: elements.entrySet())
+				{
+					QName key = entry.getKey();
+					out("  \tXmlSchemaElement.QName: \t" + key.toString());
+					XmlSchemaElement value = entry.getValue();
+				}
+
+        	}
+        }
+		out("\n");
 
 		out("Services: ");
 		for (Service service : (Collection<Service>) defs.getServices().<Service>values()) {
