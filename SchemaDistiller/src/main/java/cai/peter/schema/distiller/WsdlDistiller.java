@@ -66,10 +66,6 @@ public class WsdlDistiller
 		XmlSchemaTotalDigitsFacet;
 	}
 	
-	private static void out(String str) {
-		System.out.println(str);
-	}
-
 	void processSchemas(Definition defs)
 	{
 		WSDLServiceBuilder wsdlServiceBuilder = new WSDLServiceBuilder(BusFactory.getDefaultBus());
@@ -220,7 +216,6 @@ public class WsdlDistiller
 				}
 	
 			}
-			System.out.println("");
 		}
 		return result;
 	}
