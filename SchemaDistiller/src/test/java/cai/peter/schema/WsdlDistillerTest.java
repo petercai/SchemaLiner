@@ -30,7 +30,8 @@ public class WsdlDistillerTest
 	 */
 	private static final Logger	logger	= Logger.getLogger(WsdlDistillerTest.class);
 //	String wsdlfile = "at_wsdl/wsdl/AccountTransferHTTP.wsdl";
-	String wsdlfile = "at_wsdl/wsdl/AccountTransferFull.wsdl";
+//	String wsdlfile = "at_wsdl/wsdl/AccountTransferFull.wsdl";
+	String wsdlfile = "ETransfer_SFS_20140815/ETransferIncomingV1_0_0.wsdl";
 //	String wsdlfile = "ebay/PayPalSvc.wsdl";
 	private WsdlDistiller	wsdldistiller = new WsdlDistiller();
 	private Definition	defs;

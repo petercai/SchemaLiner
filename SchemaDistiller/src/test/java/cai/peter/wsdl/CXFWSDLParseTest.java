@@ -33,8 +33,8 @@ public class CXFWSDLParseTest {
 	@Test
 	public void test() throws WSDLException
 	{
-//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
-		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferFull.wsdl");
+		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
+//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferFull.wsdl");
 
 		Bus bus = BusFactory.getDefaultBus();
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
@@ -138,11 +138,11 @@ public class CXFWSDLParseTest {
 //		Map messages = defs.getMessages();
 		for (Object key : defs.getMessages().keySet())
 		{
-			QName qName = (QName)key;
-			String localPart = qName.getLocalPart();
-			Message msg = defs.getMessage(qName);
+			QName messageName = (QName)key;
+			String localPart = messageName.getLocalPart();
+			Message msg = defs.getMessage(messageName);
 			out("");
-			out("  Message Name: " + localPart);
+			out("  Message Name: " + messageName);
 			out("  Message Parts: ");
 			for ( Object obj: msg.getParts().values()) {
 				Part part  = (Part)obj;

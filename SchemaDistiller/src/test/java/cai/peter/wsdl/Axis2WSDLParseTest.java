@@ -64,8 +64,8 @@ public class Axis2WSDLParseTest {
 	@Test
 	public void test() throws WSDLException, AxisFault
 	{
-		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
-//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferFull.wsdl");
+//		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferHTTP.wsdl");
+		URL wsdlUrl = this.getClass().getClassLoader().getResource("at_wsdl/wsdl/AccountTransferFull.wsdl");
 
 		Definition defs = readInTheWSDLFile(wsdlUrl.toString());
 
