@@ -51,8 +51,6 @@ public class WsdlDistiller
 {
 	Map<QName, XmlSchemaElement> schemaElementLookup = new HashMap<QName, XmlSchemaElement>();
 	Map<QName, XmlSchemaType> schemaTypeLookup = new HashMap<QName, XmlSchemaType>();
-//	HashBasedTable<QName, String, XmlSchemaAnnotated> schemaElementLookup = HashBasedTable.create();
-//	HashBasedTable<QName, String, XmlSchemaAnnotated> schemaTypeLookup = HashBasedTable.create();
 	enum CLAZZ{
 		XmlSchemaFractionDigitsFacet,
 		XmlSchemaMaxLengthFacet,
@@ -68,17 +66,6 @@ public class WsdlDistiller
 		XmlSchemaTotalDigitsFacet;
 	}
 	
-//	Map<String, XmlSchemaElement> reindexSchema(Map<QName, XmlSchemaElement> source)
-//	{
-//		Map<String, XmlSchemaElement> nameLookup = new HashMap<String, XmlSchemaElement>();
-//		for(Map.Entry<QName, XmlSchemaElement> entry: source.entrySet())
-//		{
-//			QName key = entry.getKey();
-//			XmlSchemaElement value = entry.getValue();
-//			nameLookup.put(key.getLocalPart(), value);
-//		}
-//		return nameLookup;
-//	}
 	private static void out(String str) {
 		System.out.println(str);
 	}
@@ -100,7 +87,6 @@ public class WsdlDistiller
 		
 		String targetNSUri = defs.getTargetNamespace();
 		Map<QName, Message> messages = (Map<QName, Message>)defs.getMessages();
-//		Set<QName> messageSet = messages.keySet();
 		for (Map.Entry<QName, Message> msgEntry: messages.entrySet())
 		{
 			QName messageName = msgEntry.getKey();
@@ -114,20 +100,7 @@ public class WsdlDistiller
 		}
 
 	}
-	
-//	void populateSchemaElementLookup(XmlSchema schema)
-//	{
-//		Map<QName, XmlSchemaElement> elements = schema.getElements();
-//		for(Map.Entry<QName, XmlSchemaElement> entry: elements.entrySet())
-//		{
-//			QName key = entry.getKey();
-//			String name = key.getLocalPart();
-//			XmlSchemaElement value = entry.getValue();
-//
-//			schemaElementLookup.put(key, name, value);
-//		}
-//	
-//	}
+
 	
 	XmlSchemaElement getElement(QName qname)
 	{
@@ -138,85 +111,6 @@ public class WsdlDistiller
 	{
 		return schemaTypeLookup.get(qname);
 	}
-	
-//	XmlSchemaAnnotated lookup(QName qname, HashBasedTable<QName, String, XmlSchemaAnnotated> lookup)
-//	{
-//		XmlSchemaAnnotated result = null;
-//		Map<QName, XmlSchemaAnnotated> column = lookup.column(qname.getLocalPart());
-//		switch( column.size())
-//		{
-//		case 0:
-//			break; // do nothing, return null
-//		case 1:
-//			if(column.containsKey(qname))
-//				result = column.get(qname);
-//			else
-//			{
-//				for(QName aName: column.keySet())
-//				{
-//					out("[expected]"+qname+"=>[actual]"+aName);
-//					result = column.get(aName);
-//				}
-//			}
-//			break;
-//		default: // >1
-//			result = column.get(qname);
-//			break;
-//		}
-//		
-//		return result;
-//	}
-	
-//	void populateSchemaTypeLookup(XmlSchema schema)
-//	{
-//		Map<QName, XmlSchemaType> schemaTypes = schema.getSchemaTypes();
-//		for(Map.Entry<QName, XmlSchemaType> entry : schemaTypes.entrySet())
-//		{
-//			QName key = entry.getKey();
-//			String name = key.getLocalPart();
-//			XmlSchemaType value = entry.getValue();
-//			
-//			schemaTypeLookup.put(key, name, value);
-//		}
-//	}
-//	void populateSchema(Map<QName, XmlSchemaElement> lookup, XmlSchema schema)
-//	{
-//		if( schema == null ) return;
-//		lookup.putAll(schema.getElements());
-//		List<XmlSchemaExternal> externals = schema.getExternals();
-//		if( externals == null || externals.size()==0) return;
-//		try
-//		{
-//			String sourceURI = schema.getSourceURI();
-//			String path = new URI(sourceURI).getPath();
-//			File sourceFile = new File(path);
-//			for(XmlSchemaExternal ext : externals)
-//			{
-//				String schemaLocation = ext.getSchemaLocation();
-//				File schemaFile = new File(sourceFile.getParent(), schemaLocation);
-//				try
-//				{
-//					if( schemaFile.exists())
-//					{
-//						InputStream is = new FileInputStream(schemaFile);
-//						XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-//						InputStreamReader inputStreamReader = new InputStreamReader(is);
-//						XmlSchema child = schemaCol.read(inputStreamReader);
-//						lookup.putAll(child.getElements());
-//						populateSchema(lookup, child);
-//					}
-//				}
-//				catch (FileNotFoundException e)
-//				{
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		catch (URISyntaxException e)
-//		{
-//			e.printStackTrace();
-//		}
-//	}
 
 	public TypeInfo getPrimitiveTypeName(XmlSchemaSimpleType simpleType)
 	{
@@ -328,27 +222,6 @@ public class WsdlDistiller
 			}
 			System.out.println("");
 		}
-		/*
-		 * messages
-		 */
-//		Set<QName> messageSet = defs.getMessages().<QName>keySet();
-//		for (QName msgQName : messageSet)
-//		{
-//			String messageName = msgQName.getLocalPart();
-//			xelement msgNode = new xelement("message", messageName);
-//			result.add(msgNode);
-//	
-//			Message msg = defs.getMessage(msgQName);
-//			for ( Part part: (Collection<Part>) msg.getParts().<Part>values())
-//			{
-//				QName partElement = part.getElementName();
-//				if( partElement!= null)
-//				{
-//					addAndPopulateElement(msgNode, getElement(partElement));
-//				}
-//			}
-//		}
-	
 		return result;
 	}
 	void addAndPopulateAny( xnode parent, XmlSchemaAny schemaAny)
@@ -409,7 +282,6 @@ public class WsdlDistiller
 		QName baseTypeName = complexType.getBaseSchemaTypeName();
 		if( baseTypeName!=null)
 		{
-//			XmlSchemaElement se = qNameLookup.get(baseTypeName);
 			XmlSchemaType schemaType = getType(baseTypeName);
 			if( schemaType!=null &&  schemaType instanceof XmlSchemaComplexType )
 				processComplexType(element, (XmlSchemaComplexType)schemaType);

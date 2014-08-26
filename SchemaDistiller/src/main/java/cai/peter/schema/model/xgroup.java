@@ -12,8 +12,6 @@ import com.google.common.base.Joiner;
 public class xgroup extends xnode
 {
 	protected String order;
-//	protected List<xnode> items = new ArrayList<xnode>();
-//	protected List<xgroup> groups = new ArrayList<xgroup>();
 	public xgroup(String order)
 	{
 		super(null);
@@ -75,16 +73,4 @@ public class xgroup extends xnode
 	{
 		return path;
 	}
-
-//	@Override
-//	public List<xelement> getItems()
-//	{
-//		ArrayList<xelement> result = new ArrayList<xelement>(items.size());
-//		for( xnode n : items)
-//		{
-//			result.add((xelement)n);
-//		}
-//		return result;
-//	}
-
 }

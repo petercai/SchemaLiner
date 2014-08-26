@@ -111,29 +111,4 @@ public class xelement extends xnode
 	{
 		return attributes;
 	}
-
-//	@Override
-//	public void addItem(xnode child)
-//	{
-//		super.addItem(child);
-//		((xnode)child).setPath(getPath());
-//	}
-
-//	@Override
-//	public List<xelement> getItems()
-//	{
-//		ArrayList<xelement> result = new ArrayList<xelement>(items.size());
-//		for( xnode n : items)
-//		{
-//			result.add((xelement)n);
-//		}
-//		return result;
-//	}
-
-//	@Override
-//	public void addGroup(xgroup group)
-//	{
-//		super.addGroup(group);
-//		group.setPath(getPath());
-//	}
 }
