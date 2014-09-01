@@ -26,6 +26,7 @@ import org.exolab.castor.xml.schema.Schema;
 import cai.peter.schema.CastorUtil;
 import cai.peter.schema.distiller.WsdlDistiller;
 import cai.peter.schema.distiller.XsdDistiller;
+import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xnode;
 
 public class SchemaTransformer
@@ -84,6 +85,11 @@ public class SchemaTransformer
 					return lowerCase.endsWith(".wsdl");
 				}
 			});
+			for( File f : listFiles)
+			{
+				transformWsdl(f);
+			}
+			
 
 		}
 		else
@@ -134,14 +140,15 @@ public class SchemaTransformer
         reader.setExtensionRegistry(extReg);
 
         Definition defs = reader.readWSDL(wsdlFile.toString());
-		List<xnode> elements = distiller.processDefinitions(defs);
+		List<xelement> elements = distiller.processDefinitions(defs);
 
 		SchemaTransformer allInOneFile = new SchemaTransformer(new File(wsdlFile.toString()+".all"));
-		for( xnode node : elements)
+		for( xelement node : elements)
 		{
 			allInOneFile.transform(node);
+			String ns = node.getNs();
 			String name = node.getName();
-			File outputFile = new File(wsdlFile.toString()+"."+name);
+			File outputFile = new File(wsdlFile.toString()+"."+ns+"."+name);
 			SchemaTransformer elementFile = new SchemaTransformer((outputFile));
 			elementFile.transform(node);
 			elementFile.close();

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
@@ -37,7 +38,6 @@ import org.apache.ws.commons.schema.XmlSchemaGroupBase;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
@@ -199,9 +199,9 @@ public class WsdlDistiller
 		return typeInfo;
 	}
 	
-	public List<xnode> processDefinitions(Definition defs) throws AxisFault
+	public List<xelement> processDefinitions(Definition defs) throws AxisFault
 	{
-		ArrayList<xnode> result = new ArrayList<xnode>();
+		ArrayList<xelement> result = new ArrayList<xelement>();
 	
 		processSchemas(defs);
 		
@@ -246,6 +246,27 @@ public class WsdlDistiller
 					addAndPopulateElement(faultNode, faultSchemaElement);
 				}
 	
+			}
+		}
+		
+		/*
+		 * messages
+		 */
+		Set<QName> messageSet = defs.getMessages().keySet();
+		for (QName msgQName : messageSet)
+		{
+			String messageName = msgQName.getLocalPart();
+			xelement msgNode = new xelement("Message", messageName);
+			result.add(msgNode);
+
+			Message msg = defs.getMessage(msgQName);
+			for ( Part part: (Collection<Part>) msg.getParts().values())
+			{
+				QName partElement = part.getElementName();
+				if( partElement!= null)
+				{
+					addAndPopulateElement(msgNode, getElement(partElement));
+				}
 			}
 		}
 		return result;
