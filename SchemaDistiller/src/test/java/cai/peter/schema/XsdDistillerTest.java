@@ -75,14 +75,6 @@ public class XsdDistillerTest
 			logElement(node.getItems());
 		}
 	}
-	@Test
-	public void testXmlSchemaCollection() throws FileNotFoundException
-	{
-		InputStream is = new FileInputStream(schemaFile);
-		XmlSchemaCollection schemaCol = new XmlSchemaCollection();
-		XmlSchema schema = schemaCol.read(new StreamSource(is));
-		Map<QName, XmlSchemaElement> elements = schema.getElements();
-	}
 
 
 }

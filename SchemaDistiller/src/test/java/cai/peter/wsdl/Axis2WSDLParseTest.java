@@ -2,7 +2,9 @@ package cai.peter.wsdl;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,16 +31,14 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.service.model.SchemaInfo;
-import org.apache.cxf.service.model.ServiceInfo;
-import org.apache.cxf.wsdl.WSDLManager;
-import org.apache.cxf.wsdl11.WSDLServiceBuilder;
+import org.apache.axis2.util.SchemaUtil;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaObject;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.junit.Test;
+
+import cai.peter.schema.XmlSchemaTypeEnum;
 
 public class Axis2WSDLParseTest {
 
@@ -79,33 +79,41 @@ public class Axis2WSDLParseTest {
 
 		/* For detailed schema information see the FullSchemaParser.java sample.*/
 		out("Schemas: ");
-//		WSDLServiceBuilder wsdlServiceBuilder = new WSDLServiceBuilder(bus);
-//		List<ServiceInfo> serviceInfos = wsdlServiceBuilder.buildServices(defs);
-//		for( ServiceInfo serviceInfo : serviceInfos)
-//		{
-//			List<SchemaInfo> schemas = serviceInfo.getSchemas();
-//			for( SchemaInfo schemaInfo : schemas )
-//			{
-//				XmlSchema schema = schemaInfo.getSchema();
-//				out("  TargetNamespace: \t" + schema.getTargetNamespace());
-//			}
-//
-//		}
 		WSDL11ToAllAxisServicesBuilder builder;
         builder = new WSDL11ToAllAxisServicesBuilder(defs);
         List<AxisService> allServices = builder.populateAllServices();
-        for( AxisService service : allServices)
+        for( AxisService as : allServices)
         {
-        	ArrayList<XmlSchema> schemas = service.getSchema();
+        	ArrayList<XmlSchema> schemas = as.getSchema();
         	for( XmlSchema schema : schemas )
         	{
 				out("  TargetNamespace: \t" + schema.getTargetNamespace());
-				Map<QName, XmlSchemaElement> elements = schema.getElements();
-				for(Map.Entry<QName, XmlSchemaElement> entry: elements.entrySet())
+				int count = schema.getIncludes().getCount();
+				List<XmlSchema> schemaList = Arrays.<XmlSchema>asList(SchemaUtil.getAllSchemas(schema));
+				for( XmlSchema s : schemaList )
 				{
-					QName key = entry.getKey();
-					out("  \tXmlSchemaElement.QName: \t" + key.toString());
-					XmlSchemaElement value = entry.getValue();
+					out("  TargetNamespace: \t" + s.getTargetNamespace());
+					Iterator<XmlSchemaObject> it = s.getItems().getIterator();
+					while(it.hasNext())
+					{
+						XmlSchemaObject object = it.next();
+						switch( XmlSchemaTypeEnum.valueOf(object.getClass().getSimpleName()))
+						{
+						case XmlSchemaElement:
+							XmlSchemaElement e = (XmlSchemaElement)object;
+							out(e.getQName().toString());
+							break;
+						case XmlSchemaSimpleType:
+						case XmlSchemaComplexType:
+							break;
+						case XmlSchemaImport:
+						case XmlSchemaInclude:
+							break;
+						default:
+							out("\t\t???\t"+object.getClass().getSimpleName());
+							break;
+						}
+					}
 				}
 
         	}

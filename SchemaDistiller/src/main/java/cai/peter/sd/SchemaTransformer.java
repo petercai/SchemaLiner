@@ -12,10 +12,15 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.wsdl.Definition;
+import javax.wsdl.Input;
+import javax.wsdl.Output;
+import javax.wsdl.extensions.AttributeExtensible;
+import javax.wsdl.extensions.ExtensionRegistry;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
 
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.wsdl.WSDLManager;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.exolab.castor.xml.schema.Schema;
 
 import cai.peter.schema.CastorUtil;
@@ -116,9 +121,19 @@ public class SchemaTransformer
 		WsdlDistiller distiller = new WsdlDistiller();
 
 
-		Bus bus = BusFactory.getDefaultBus();
-		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
-		Definition defs = wsdlManager.getDefinition(wsdlFile.toURI().toURL());
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        reader.setFeature("javax.wsdl.importDocuments", true);
+
+        ExtensionRegistry extReg = WSDLFactory.newInstance().newPopulatedExtensionRegistry();
+        extReg.registerExtensionAttributeType(Input.class,
+                new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION),
+                AttributeExtensible.STRING_TYPE);
+        extReg.registerExtensionAttributeType(Output.class,
+                new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION),
+                AttributeExtensible.STRING_TYPE);
+        reader.setExtensionRegistry(extReg);
+
+        Definition defs = reader.readWSDL(wsdlFile.toString());
 		List<xnode> elements = distiller.processDefinitions(defs);
 
 		SchemaTransformer allInOneFile = new SchemaTransformer(new File(wsdlFile.toString()+".all"));
