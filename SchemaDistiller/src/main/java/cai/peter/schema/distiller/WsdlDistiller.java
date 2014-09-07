@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
@@ -54,7 +55,90 @@ public class WsdlDistiller
 {
 	Map<QName, XmlSchemaElement> schemaElementLookup = new HashMap<QName, XmlSchemaElement>();
 	Map<QName, XmlSchemaType> schemaTypeLookup = new HashMap<QName, XmlSchemaType>();
-	void processSchemas(Definition defs) throws AxisFault
+	
+	public Map<String, Collection<xelement>> getSchemaInfo()
+	{
+		Map<String, Map<String, xelement>> nsElMap = new HashMap<String, Map<String, xelement>>();
+		Map<String, xelement> map;
+		for(QName qname : schemaElementLookup.keySet())
+		{
+			String ns = qname.getNamespaceURI();
+			if(!nsElMap.containsKey(ns))
+			{
+				map = new TreeMap<String, xelement>(); 
+				nsElMap.put(ns, map);
+			}
+			else
+				map = nsElMap.get(ns);
+			String name = qname.getLocalPart();
+			XmlSchemaElement val = schemaElementLookup.get(qname);
+			xelement e = new xelement("Element", name);
+//			addAndPopulateElement(e,val);
+			map.put(name, e);
+		}
+		Map<String, Map<String, xelement>> nsCTMap = new HashMap<String, Map<String, xelement>>();
+		Map<String, Map<String, xelement>> nsSTMap = new HashMap<String, Map<String, xelement>>();
+		for( QName qname : schemaTypeLookup.keySet())
+		{
+			String ns = qname.getNamespaceURI();
+			String name = qname.getLocalPart();
+			XmlSchemaType val = schemaTypeLookup.get(qname);
+			xelement e;
+			switch( XmlSchemaTypeEnum.valueOf(val.getClass().getSimpleName()))
+			{
+			case XmlSchemaComplexType:
+				if( !nsCTMap.containsKey(ns))
+				{
+					map = new TreeMap<String, xelement>(); 
+					nsCTMap.put(ns, map);
+				}
+				else
+					map = nsCTMap.get(ns);
+				e = new xelement("ComplexType", name);
+//				processSchemaType(e, val);
+				map.put(name, e);
+				break;
+			case XmlSchemaSimpleType:
+				if( !nsSTMap.containsKey(ns))
+				{
+					map = new TreeMap<String, xelement>(); 
+					nsSTMap.put(ns, map);
+				}
+				else
+					map = nsSTMap.get(ns);
+				e = new xelement("SimpleType", name);
+				processSchemaType(e, val);
+				map.put(name, e);
+				break;
+			}
+			
+		}
+		//TODO
+		Map<String, Collection<xelement>> result = new HashMap<String, Collection<xelement>>();
+		for(String ns : nsElMap.keySet())
+		{
+			Collection<xelement> values = nsElMap.get(ns).values();
+			result.put(ns, values);
+		}
+		for(String ns : nsCTMap.keySet())
+		{
+			Collection<xelement> values = nsCTMap.get(ns).values();
+			result.put(ns, values);
+		}
+		for(String ns : nsSTMap.keySet())
+		{
+			Collection<xelement> values = nsSTMap.get(ns).values();
+			result.put(ns, values);
+		}
+		return result;
+	}
+	
+	void populateSchemType( xelement parent, XmlSchemaType schemaType)
+	{
+		//TODO
+	}
+	
+	public void processSchemas(Definition defs) throws AxisFault
 	{
 		WSDL11ToAllAxisServicesBuilder builder = new WSDL11ToAllAxisServicesBuilder(defs);
         List<AxisService> allServices = builder.populateAllServices();
@@ -96,19 +180,6 @@ public class WsdlDistiller
         	}
         }
 
-//		WSDLServiceBuilder wsdlServiceBuilder = new WSDLServiceBuilder(BusFactory.getDefaultBus());
-//		List<ServiceInfo> serviceInfos = wsdlServiceBuilder.buildServices(defs);
-//		for( ServiceInfo serviceInfo : serviceInfos)
-//		{
-//			List<SchemaInfo> schemas = serviceInfo.getSchemas();
-//			for( SchemaInfo schemaInfo : schemas )
-//			{
-//				XmlSchema schema = schemaInfo.getSchema();
-//				schemaElementLookup.putAll(schema.getElements());
-//				schemaTypeLookup.putAll(schema.getSchemaTypes());
-//			}
-//		}
-		
 		String targetNSUri = defs.getTargetNamespace();
 		Map<QName, Message> messages = (Map<QName, Message>)defs.getMessages();
 		for (Map.Entry<QName, Message> msgEntry: messages.entrySet())
@@ -126,17 +197,17 @@ public class WsdlDistiller
 	}
 
 	
-	XmlSchemaElement getElement(QName qname)
+	XmlSchemaElement lookupElement(QName qname)
 	{
 		return schemaElementLookup.get(qname);
 	}
 	
-	XmlSchemaType getType(QName qname)
+	XmlSchemaType lookupType(QName qname)
 	{
 		return schemaTypeLookup.get(qname);
 	}
 
-	public TypeInfo getPrimitiveTypeName(XmlSchemaSimpleType simpleType)
+	TypeInfo getPrimitiveTypeName(XmlSchemaSimpleType simpleType)
 	{
 		TypeInfo typeInfo=null;
 		String ns=null;
@@ -178,12 +249,16 @@ public class WsdlDistiller
 				switch(xtype)
 				{
 				case XmlSchemaMaxLengthFacet:
-				case XmlSchemaFractionDigitsFacet:
 					typeInfo.setMax(value);
 					break;
+				case XmlSchemaFractionDigitsFacet:
+					typeInfo.setFraction(value);
+					break;
 				case XmlSchemaMinLengthFacet:
-				case XmlSchemaTotalDigitsFacet:
 					typeInfo.setMin(value);
+					break;
+				case XmlSchemaTotalDigitsFacet:
+					typeInfo.setTotal(value);
 					break;
 				case XmlSchemaEnumerationFacet:
 					typeInfo.addEnumeration(value);
@@ -227,14 +302,14 @@ public class WsdlDistiller
 				String inputName = inputQName.getLocalPart();
 				xelement inputNode = new xelement("Input",inputName);
 				operationNode.addItem(inputNode);
-				XmlSchemaElement inputSchemaElement = getElement(inputQName);
+				XmlSchemaElement inputSchemaElement = lookupElement(inputQName);
 				addAndPopulateElement(inputNode, inputSchemaElement);
 				
 				QName outputQName = op.getOutput().getMessage().getQName();
 				String ouputName = outputQName.getLocalPart();
 				xelement outputNode = new xelement("Output", ouputName);
 				operationNode.addItem(outputNode);
-				XmlSchemaElement ouputSchemaElement = getElement(outputQName);
+				XmlSchemaElement ouputSchemaElement = lookupElement(outputQName);
 				addAndPopulateElement(outputNode, ouputSchemaElement);
 				
 				for (Fault fault : (Collection<Fault>) op.getFaults().<Fault>values()) {
@@ -242,7 +317,7 @@ public class WsdlDistiller
 					String faultName = fault.getName();
 					xelement faultNode = new xelement("Fault", faultName);
 					operationNode.addItem(faultNode);
-					XmlSchemaElement faultSchemaElement = getElement(faultQName);
+					XmlSchemaElement faultSchemaElement = lookupElement(faultQName);
 					addAndPopulateElement(faultNode, faultSchemaElement);
 				}
 	
@@ -265,7 +340,7 @@ public class WsdlDistiller
 				QName partElement = part.getElementName();
 				if( partElement!= null)
 				{
-					addAndPopulateElement(msgNode, getElement(partElement));
+					addAndPopulateElement(msgNode, lookupElement(partElement));
 				}
 			}
 		}
@@ -288,7 +363,7 @@ public class WsdlDistiller
 			xelement refNode = new xelement(refName.getLocalPart());
 			refNode.setPath(parent.getPath());
 			parent.addItem(refNode);
-			XmlSchemaElement xmlSchemaElement = getElement(refName);
+			XmlSchemaElement xmlSchemaElement = lookupElement(refName);
 			populateElement(refNode, xmlSchemaElement);
 		}
 		else 
@@ -314,7 +389,7 @@ public class WsdlDistiller
 		}
 		else if( typeQName != null )
 		{
-			schemaType = getType(typeQName);
+			schemaType = lookupType(typeQName);
 			if( schemaType != null )
 				processSchemaType(element, schemaType);
 			else
@@ -349,7 +424,7 @@ public class WsdlDistiller
 		QName baseTypeName = complexType.getBaseSchemaTypeName();
 		if( baseTypeName!=null)
 		{
-			XmlSchemaType schemaType = getType(baseTypeName);
+			XmlSchemaType schemaType = lookupType(baseTypeName);
 			if( schemaType!=null &&  schemaType instanceof XmlSchemaComplexType )
 				processComplexType(element, (XmlSchemaComplexType)schemaType);
 			else
@@ -394,11 +469,9 @@ public class WsdlDistiller
 	
 	void populateGroup(xgroup resultGroup, XmlSchemaGroupBase schemaGroup)
 	{
-//		if(schemaGroup instanceof XmlSchemaSequence)
 		{
 			XmlSchemaObjectCollection items = (/*(XmlSchemaSequence)*/schemaGroup).getItems();
 			Iterator iterator = items.getIterator();
-//			for(XmlSchemaSequenceMember item : items)
 			while(iterator.hasNext())
 			{
 				Object item = iterator.next();
@@ -419,32 +492,5 @@ public class WsdlDistiller
 					throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
 			}
 		}
-//		else if (schemaGroup instanceof XmlSchemaChoice)
-//		{
-//			List<XmlSchemaObject> items = ((XmlSchemaChoice)schemaGroup).getItems();
-//			for( XmlSchemaObject item : items )
-//			{
-//				if( item instanceof XmlSchemaGroupBase)
-//				{
-//					XmlSchemaGroupBase itSchemaGroup = (XmlSchemaGroupBase)item;
-//					addAndPopulateGroup(resultGroup, itSchemaGroup);
-//				}
-//				else if (item instanceof XmlSchemaElement)
-//				{
-//					addAndPopulateElement(resultGroup, (XmlSchemaElement)item);
-//				}
-//				else
-//					throw new RuntimeException("Unsupported particle: "+item.getClass().getName()+"!");
-//			}
-//
-//		}
-//		else if (schemaGroup instanceof XmlSchemaAll)
-//		{
-//			List<XmlSchemaElement> items = ((XmlSchemaAll)schemaGroup).getItems();
-//			for(XmlSchemaElement item : items)
-//			{
-//				addAndPopulateElement(resultGroup, item);
-//			}
-//		}
 	}
 }

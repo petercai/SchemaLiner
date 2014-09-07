@@ -8,7 +8,9 @@ package cai.peter.schema;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Input;
@@ -40,14 +42,10 @@ public class WsdlDistillerTest
 	String wsdlETransfer = "ETransfer_SFS_20140815/ETransferIncomingV1_0_0.wsdl";
 	String wsdlfile = "ebay/PayPalSvc.wsdl";
 	private WsdlDistiller	wsdldistiller = new WsdlDistiller();
-//	private Definition	defs;
 
 	@Before
 	public void init() throws IOException, URISyntaxException, WSDLException
 	{
-//		Definition definition = getWSDLDefinition();
-//        
-//        defs = definition;
 	}
 
 
@@ -99,7 +97,22 @@ public class WsdlDistillerTest
 		logElement(wsdldistiller.processDefinitions(wsdlDefinition));
 	}
 	
-	void logElement(List<? extends xnode> nodes)
+	@Test
+	public void testGetSchemaTypes() throws Exception
+	{
+		URL url = this.getClass().getClassLoader().getResource(wsdlATSeperated);
+		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
+		wsdldistiller.processSchemas(wsdlDefinition);
+		Map<String, Collection<xelement>> schemaInfo = wsdldistiller.getSchemaInfo();
+		for( Map.Entry<String, Collection<xelement>> entry : schemaInfo.entrySet())
+		{
+			String key = entry.getKey();
+			logger.info(">>>>>>"+key);
+			logElement(entry.getValue());
+		}
+	}
+	
+	void logElement(Collection<? extends xnode> nodes)
 	{
 		if( nodes == null || nodes.size()==0) return;
 		for( xnode node : nodes)

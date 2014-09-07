@@ -41,7 +41,8 @@ public class XsdDistillerTest
 //	String xsdfile = "Services/External/CustomerAccountingUnitServiceIntf.xsd";
 //	String xsdfile = "at_wsdl/wsdl/Schemas/Services/Internal/ResourceManagement.xsd";
 //	String xsdfile = "at_wsdl/wsdl/Schemas/Services/Internal/AccountFacility.xsd";
-	String xsdfile = "at_wsdl/wsdl/Schemas/Services/External/ProvideAccountTransfer.xsd";
+//	String xsdfile = "at_wsdl/wsdl/Schemas/Services/External/ProvideAccountTransfer.xsd";
+	String xsdfile = "schemas/schema-1.xsd";
 	private Schema	schema;
 	private XsdDistiller	xsddistiller;
 	private File	schemaFile;

@@ -12,7 +12,9 @@ import java.util.List;
 public class xelement extends xnode
 {
 	protected String type;
-	public String rangeFrom,rangeTo;
+//	public String minOrTotal,maxOrFraction;
+	protected String min,max;
+	protected String total,fraction;
 	protected String	ns;
 	protected String	cardinality	= "";
 	protected List<xattribute>	attributes	= new ArrayList<xattribute>();
@@ -37,10 +39,14 @@ public class xelement extends xnode
 		s.append(getQName());
 		s.append(cardinality);
 		s.append(type==null?"":":"+type);
-		if( rangeFrom!=null || rangeTo != null)
+		if( min!=null || max!= null)
 			s.append(MessageFormat.format(	"[{0}.{1}]",
-			                              	(rangeFrom==null?".":rangeFrom),
-			                              	(rangeTo==null?".":rangeTo)));
+			                              	(min==null?".":min),
+			                              	(max==null?".":max)));
+		if( total!=null )
+			s.append(MessageFormat.format(	"[{0}.{1}]",
+					(total),
+					(fraction==null?"0":fraction)));
 
 		return s.toString();
 	}
@@ -53,8 +59,10 @@ public class xelement extends xnode
 	public void setTypeInfo( TypeInfo info)
 	{
 		this.type = info.getName();
-		this.rangeFrom = info.getMin();
-		this.rangeTo = info.getMax();
+		this.min= info.getMin();
+		this.max= info.getMax();
+		this.total = info.getTotal();
+		this.fraction = info.getFraction();
 	}
 	
 	public String getPath()
@@ -110,5 +118,45 @@ public class xelement extends xnode
 	public List<xattribute> getAttributes()
 	{
 		return attributes;
+	}
+
+	public String getMin()
+	{
+		return min;
+	}
+
+	public void setMin(String min)
+	{
+		this.min = min;
+	}
+
+	public String getMax()
+	{
+		return max;
+	}
+
+	public void setMax(String max)
+	{
+		this.max = max;
+	}
+
+	public String getTotal()
+	{
+		return total;
+	}
+
+	public void setTotal(String total)
+	{
+		this.total = total;
+	}
+
+	public String getFraction()
+	{
+		return fraction;
+	}
+
+	public void setFraction(String fraction)
+	{
+		this.fraction = fraction;
 	}
 }

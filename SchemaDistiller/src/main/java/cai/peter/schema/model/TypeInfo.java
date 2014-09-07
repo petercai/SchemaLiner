@@ -20,7 +20,7 @@ public class TypeInfo
 		this.name = name;
 	}
 	String name;
-	String max, min;
+	String max, min, total, fraction;
 	List<String> enumeration = new ArrayList<String>();
 	public String getName()
 	{
@@ -54,5 +54,21 @@ public class TypeInfo
 	public void addEnumeration(String val)
 	{
 		this.enumeration.add(val);
+	}
+	public String getTotal()
+	{
+		return total;
+	}
+	public void setTotal(String total)
+	{
+		this.total = total;
+	}
+	public String getFraction()
+	{
+		return fraction;
+	}
+	public void setFraction(String fraction)
+	{
+		this.fraction = fraction;
 	}
 }

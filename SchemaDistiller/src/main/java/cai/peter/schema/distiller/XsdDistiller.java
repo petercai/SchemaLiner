@@ -61,16 +61,16 @@ public class XsdDistiller
 			switch( ( facet.getName()))
 			{
 			case "maxLength":
-				el.rangeTo = facet.getValue();
+				el.setMax(facet.getValue());
 				break;
 			case "minLength":
-				el.rangeFrom = facet.getValue();
+				el.setMin(facet.getValue());
 				break;
 			case "totalDigits":
-				el.rangeFrom = facet.getValue();
+				el.setTotal(facet.getValue());
 				break;
 			case "fractionDigits":
-				el.rangeTo = facet.getValue();
+				el.setFraction (facet.getValue());
 				break;
 			}
 		}
@@ -137,11 +137,11 @@ public class XsdDistiller
 		}
 	}
 
-	private xgroup processGroup(xelement container, final Group group) throws Exception
+	private void processGroup(xnode parent, final Group group) throws Exception
 	{
-		xgroup result = new xgroup(group.getOrder().name());
-		result.setPath(container.getPath());
-		container.addItem(result);
+		xgroup newGroup = new xgroup(group.getOrder().name());
+		newGroup.setPath(parent.getPath());
+		parent.addItem(newGroup);
 
 		Enumeration<Annotated> particles = group.enumerate();
 		while (particles.hasMoreElements())
@@ -149,19 +149,21 @@ public class XsdDistiller
 			Object particle = particles.nextElement();
 			if (particle instanceof Group)
 			{
-				result.addItem(processGroup(container, (Group)particle));
+//				newGroup.addItem(
+						processGroup(newGroup, (Group)particle);
+//						);
 			}
 			else if (particle instanceof ElementDecl )
 			{
-				xnode element = processElement((ElementDecl)particle, container.getPath());
-				container.addItem(element);
-				result.addItem(element);
+				xnode element = processElement((ElementDecl)particle, parent.getPath());
+//				parent.addItem(element);
+				newGroup.addItem(element);
 			}
 			else if( particle instanceof Wildcard )
 			{
 				xnode node = processWildard((Wildcard) particle);
-				container.addItem(node);
-				result.addItem(node);
+//				parent.addItem(node);
+				newGroup.addItem(node);
 
 			}
 			else
@@ -170,7 +172,7 @@ public class XsdDistiller
 			}
 		}
 
-		return result;
+//		return newGroup;
 	}
 
 	xnode processWildard(Wildcard content)
