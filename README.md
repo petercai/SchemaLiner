@@ -2,12 +2,13 @@ SchemaDistiller
 ===========
 Intro
 -----------
-SchemaDistiller is a handy tool to transform XML Schema(XSD) and WSDL to an XPath-style plain text file.
+SchemaDistiller is a handy tool to transform one or more XML Schema(XSD) and WSDL files to XPath-style text files, which are stripped most of XML Schema details and focus on the data, their type information and the layout.
 
 Features
 -----------
-###1. XSD -> text
+###1. Transform XSD file to plain text file
 
+XML Schema file:
 	<xs:element name="AddRequest">
 		<xs:complexType>
 			<xs:sequence>
@@ -34,8 +35,7 @@ Features
 		</xs:complexType>
 	</xs:element>
 
-For example, XML schema above will be transformed to a plain text below:
-
+XPath-style text file:
 	/AddRequest
 	/AddRequest/ParameterOne:int
 	/AddRequest/Parameter2:int[8.2]
@@ -44,6 +44,5 @@ For example, XML schema above will be transformed to a plain text below:
 	/AddRequest/Parameter4:string[2.5]
 	
 	
-###2. WSDL -> text
+###2. Transform WSDL file to plain text file
 
-###3. Process single or multiple XML Schema (.xsd) and WSDL (.wsdl) files
