@@ -9,6 +9,7 @@ Features
 ###1. Transform XSD file to plain text file
 
 XML Schema file:
+
 	<xs:element name="AddRequest">
 		<xs:complexType>
 			<xs:sequence>
@@ -36,6 +37,7 @@ XML Schema file:
 	</xs:element>
 
 XPath-style text file:
+
 	/AddRequest
 	/AddRequest/ParameterOne:int
 	/AddRequest/Parameter2:int[8.2]
