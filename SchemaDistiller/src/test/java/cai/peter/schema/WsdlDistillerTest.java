@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.wsdl.Definition;
@@ -37,10 +36,6 @@ public class WsdlDistillerTest
 	 * Logger for this class
 	 */
 	private static final Logger	logger	= Logger.getLogger(WsdlDistillerTest.class);
-	String wsdlATSeperated = "at_wsdl/wsdl/AccountTransferHTTP.wsdl";
-	String wsdlATFull = "at_wsdl/wsdl/AccountTransferFull.wsdl";
-	String wsdlETransfer = "ETransfer_SFS_20140815/ETransferIncomingV1_0_0.wsdl";
-//	String wsdlfile = "ebay/PayPalSvc.wsdl";
 	String wsdlfile = "wsdls/Version.wsdl";
 	private WsdlDistiller	wsdldistiller = new WsdlDistiller();
 
@@ -75,50 +70,11 @@ public class WsdlDistillerTest
 
 
 	@Test
-	public void testWsdlDistillerFull() throws Exception
-	{
-		URL url = this.getClass().getClassLoader().getResource(wsdlATFull);
-		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
-		logElement(wsdldistiller.processDefinitions(wsdlDefinition));
-	}
-
-	@Test
-	public void testWsdlDistillerFull2() throws Exception
-	{
-		URL url = this.getClass().getClassLoader().getResource(wsdlETransfer);
-		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
-		logElement(wsdldistiller.processDefinitions(wsdlDefinition));
-	}
-	
-	@Test
-	public void testWsdlDistillerSeperated() throws Exception
-	{
-		URL url = this.getClass().getClassLoader().getResource(wsdlATSeperated);
-		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
-		logElement(wsdldistiller.processDefinitions(wsdlDefinition));
-	}
-	
-	@Test
 	public void testWsdlGeneral() throws Exception
 	{
 		URL url = this.getClass().getClassLoader().getResource(wsdlfile);
 		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
 		logElement(wsdldistiller.processDefinitions(wsdlDefinition));
-	}
-	
-	@Test
-	public void testGetSchemaTypes() throws Exception
-	{
-		URL url = this.getClass().getClassLoader().getResource(wsdlATSeperated);
-		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
-		wsdldistiller.processSchemas(wsdlDefinition);
-		Map<String, Collection<xelement>> schemaInfo = wsdldistiller.getSchemaInfo();
-		for( Map.Entry<String, Collection<xelement>> entry : schemaInfo.entrySet())
-		{
-			String key = entry.getKey();
-			logger.info(">>>>>>"+key);
-			logElement(entry.getValue());
-		}
 	}
 	
 	void logElement(Collection<? extends xnode> nodes)
