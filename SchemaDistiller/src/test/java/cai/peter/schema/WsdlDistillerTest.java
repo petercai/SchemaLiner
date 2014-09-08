@@ -40,7 +40,8 @@ public class WsdlDistillerTest
 	String wsdlATSeperated = "at_wsdl/wsdl/AccountTransferHTTP.wsdl";
 	String wsdlATFull = "at_wsdl/wsdl/AccountTransferFull.wsdl";
 	String wsdlETransfer = "ETransfer_SFS_20140815/ETransferIncomingV1_0_0.wsdl";
-	String wsdlfile = "ebay/PayPalSvc.wsdl";
+//	String wsdlfile = "ebay/PayPalSvc.wsdl";
+	String wsdlfile = "wsdls/Version.wsdl";
 	private WsdlDistiller	wsdldistiller = new WsdlDistiller();
 
 	@Before
@@ -93,6 +94,14 @@ public class WsdlDistillerTest
 	public void testWsdlDistillerSeperated() throws Exception
 	{
 		URL url = this.getClass().getClassLoader().getResource(wsdlATSeperated);
+		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
+		logElement(wsdldistiller.processDefinitions(wsdlDefinition));
+	}
+	
+	@Test
+	public void testWsdlGeneral() throws Exception
+	{
+		URL url = this.getClass().getClassLoader().getResource(wsdlfile);
 		Definition wsdlDefinition = getWSDLDefinition(url.toURI().toString());
 		logElement(wsdldistiller.processDefinitions(wsdlDefinition));
 	}

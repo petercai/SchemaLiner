@@ -18,8 +18,10 @@ import java.util.TreeMap;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
+import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
+import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
@@ -298,27 +300,44 @@ public class WsdlDistiller
 				 */
 				result.add(operationNode);
 				
-				QName inputQName = op.getInput().getMessage().getQName();
-				String inputName = inputQName.getLocalPart();
-				xelement inputNode = new xelement("Input",inputName);
-				operationNode.addItem(inputNode);
-				XmlSchemaElement inputSchemaElement = lookupElement(inputQName);
-				addAndPopulateElement(inputNode, inputSchemaElement);
+				Input input = op.getInput();
+				if( input!=null )
+				{
+					QName inputQName = input.getMessage().getQName();
+					String inputName = inputQName.getLocalPart();
+					xelement inputNode = new xelement("Input",inputName);
+					if( inputNode != null )
+					{
+						operationNode.addItem(inputNode);
+						XmlSchemaElement inputSchemaElement = lookupElement(inputQName);
+						if( inputSchemaElement != null )
+							addAndPopulateElement(inputNode, inputSchemaElement);
+					}
+				}
 				
-				QName outputQName = op.getOutput().getMessage().getQName();
-				String ouputName = outputQName.getLocalPart();
-				xelement outputNode = new xelement("Output", ouputName);
-				operationNode.addItem(outputNode);
-				XmlSchemaElement ouputSchemaElement = lookupElement(outputQName);
-				addAndPopulateElement(outputNode, ouputSchemaElement);
-				
-				for (Fault fault : (Collection<Fault>) op.getFaults().<Fault>values()) {
+				Output output = op.getOutput();
+				if( output !=null )
+				{
+					QName outputQName = output.getMessage().getQName();
+					String ouputName = outputQName.getLocalPart();
+					xelement outputNode = new xelement("Output", ouputName);
+					if( outputNode != null )
+					{
+						operationNode.addItem(outputNode);
+						XmlSchemaElement ouputSchemaElement = lookupElement(outputQName);
+						if( ouputSchemaElement != null )
+							addAndPopulateElement(outputNode, ouputSchemaElement);
+					}
+				}
+				Map faults = op.getFaults();
+				for (Fault fault : (Collection<Fault>) faults.<Fault>values()) {
 					QName faultQName = fault.getMessage().getQName();
 					String faultName = fault.getName();
 					xelement faultNode = new xelement("Fault", faultName);
 					operationNode.addItem(faultNode);
 					XmlSchemaElement faultSchemaElement = lookupElement(faultQName);
-					addAndPopulateElement(faultNode, faultSchemaElement);
+					if( faultSchemaElement!=null )
+						addAndPopulateElement(faultNode, faultSchemaElement);
 				}
 	
 			}
