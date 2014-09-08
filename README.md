@@ -137,14 +137,6 @@ XPath-style plain text:
 	/Operation:foo-bar/Input:getVersionRequest
 	/Operation:Foo-ba.r2
 	/Operation:Foo-ba.r2/Input:getVersionRequest
-	/Message:getVersionFault
-	/Message:getVersionFault/ExceptionFault
-	/Message:getVersionFault/ExceptionFault/Exception?:anyType
-	/Message:getVersionRequest
-	/Message:getVersionRequest
-	/Message:getVersionResponse
-	/Message:getVersionResponse/getVersionResponse
-	/Message:getVersionResponse/getVersionResponse/return?:string
 	
 Download
 ----------------
