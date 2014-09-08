@@ -6,7 +6,7 @@ SchemaDistiller is a handy tool to transform XML Schema(XSD) and WSDL to xpath-l
 
 Features
 -----------
-###1. Transform XSD file to plain text file
+###1. Transform XML Schema(XSD) to plain text
 
 XML Schema:
 
@@ -46,7 +46,7 @@ XPath-style plain text:
 	/AddRequest/Parameter4:string[2.5]
 	
 	
-###2. Transform WSDL file to plain text file
+###2. Transform WSDL to plain text
 
 WSDL:
 
@@ -118,7 +118,6 @@ WSDL:
 			<soap:body use="literal"/>
 		  </wsdl:input>
 		</wsdl:operation>
-
 	  </wsdl:binding>
 	</wsdl:definitions>
 
