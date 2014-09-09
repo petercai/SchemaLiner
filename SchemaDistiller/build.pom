@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cai.peter.xml</groupId>
-  <artifactId>SchemaDistiller</artifactId>
-  <version>0.1</version>
+  <artifactId>xdistiller</artifactId>
+  <version>1.0</version>
   <build>
   	<plugins>
   		<plugin>
@@ -23,20 +23,20 @@
                     <descriptorRef>jar-with-dependencies</descriptorRef>
                 </descriptorRefs>
                 <archive>
-            <manifest>
-              <mainClass>cai.peter.sd.Launcher</mainClass>
-            </manifest>
-          </archive>
+		            <manifest>
+		              <mainClass>cai.peter.sd.Launcher</mainClass>
+	            </manifest>
+		        </archive>
             </configuration>
             <executions>
-          <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- bind to the packaging phase -->
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
+	          <execution>
+	            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+	            <phase>package</phase> <!-- bind to the packaging phase -->
+	            <goals>
+	              <goal>single</goal>
+	            </goals>
+	          </execution>
+	        </executions>
   		</plugin>
   		<plugin>
   			<groupId>org.apache.maven.plugins</groupId>
