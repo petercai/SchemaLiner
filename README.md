@@ -139,4 +139,8 @@ XPath-style plain text:
 	
 Download
 ----------------
-here[]
+[here](http://petercai.github.io/SchemaDistiller/dist/xdistiller-1.0.jar)
+
+Run
+-----------------
+java.exe -jar xdistiller-1.0.jar [file_name|folder_name]
