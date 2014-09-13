@@ -11,9 +11,12 @@ public class XdOption
 		super();
 		
 	}
-	public boolean showType=false;
-	public boolean showCardinality=false;
+//	public boolean showType=false;
+//	public boolean showCardinality=false;
 	public boolean showMultiFile=false;
+	
+	public enum Option {PATH_ONLY, SHOW_TYPEINFO, SHOW_CARDINALITY}
+	public Option opt = Option.PATH_ONLY;
 	
 	static private XdOption instance = new XdOption();
 	

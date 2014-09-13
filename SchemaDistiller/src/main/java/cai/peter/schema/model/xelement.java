@@ -51,6 +51,40 @@ public class xelement extends xnode
 		return s.toString();
 	}
 
+	public String toPathInfo()
+	{
+		StringBuilder s = new StringBuilder();
+		s.append(path==null?"/":path);
+		if( path !=null )
+			s.append("/");
+		s.append(getQName());
+		
+		return s.toString();
+	}
+	
+	public String toCardinlityInfo()
+	{
+		return toPathInfo()+cardinality;
+	}
+	
+	public String toTypeInfo()
+	{
+		if( type == null ) return toCardinlityInfo();
+		
+		StringBuilder s = new StringBuilder(toCardinlityInfo());
+		s.append(":"+type);
+		if( min!=null || max!= null)
+			s.append(MessageFormat.format(	"[{0}.{1}]",
+					(min==null?".":min),
+					(max==null?".":max)));
+		if( total!=null )
+			s.append(MessageFormat.format(	"[{0}.{1}]",
+					(total),
+					(fraction==null?"0":fraction)));
+		
+		return s.toString();
+	}
+	
 	public void setType(String type)
 	{
 		this.type = type;

@@ -33,13 +33,14 @@ public class Launcher
 			SchemaTransformer.transform(new File(filename));
 			if( cl.hasOption("t"))
 			{
-				XdOption.getInstance().showType = true;
+				XdOption.getInstance().opt = XdOption.Option.SHOW_TYPEINFO;
 			}
 			else if( cl.hasOption("c"))
 			{
-				XdOption.getInstance().showCardinality = true;
+				XdOption.getInstance().opt = XdOption.Option.SHOW_CARDINALITY;
 			}
-			else if( cl.hasOption("m"))
+			
+			if( cl.hasOption("m"))
 			{
 				XdOption.getInstance().showMultiFile = true;
 			}
