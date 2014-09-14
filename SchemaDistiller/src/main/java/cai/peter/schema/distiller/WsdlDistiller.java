@@ -46,6 +46,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.apache.ws.commons.schema.XmlSchemaType;
 
+import cai.peter.aop.ObjectFactory;
 import cai.peter.schema.XmlSchemaTypeEnum;
 import cai.peter.schema.model.TypeInfo;
 import cai.peter.schema.model.xelement;
@@ -367,7 +368,7 @@ public class WsdlDistiller
 	}
 	void addAndPopulateAny( xnode parent, XmlSchemaAny schemaAny)
 	{
-		xelement currentEl = new xelement("unsupportedAny");
+		xelement currentEl = new ObjectFactory("unsupportedAny").newInstance();
 		currentEl.setPath(parent.getPath());
 		currentEl.setCardinality(schemaAny.getMinOccurs(), schemaAny.getMaxOccurs());
 		parent.addItem(currentEl);
@@ -379,7 +380,7 @@ public class WsdlDistiller
 		QName refName = schemaElement.getRefName();
 		if( refName != null )
 		{
-			xelement refNode = new xelement(refName.getLocalPart());
+			xelement refNode = new ObjectFactory(refName.getLocalPart()).newInstance();
 			refNode.setPath(parent.getPath());
 			parent.addItem(refNode);
 			XmlSchemaElement xmlSchemaElement = lookupElement(refName);
@@ -388,7 +389,7 @@ public class WsdlDistiller
 		else 
 		if( name != null )
 		{
-			xelement currentEl = new xelement(name);
+			xelement currentEl = new ObjectFactory(name).newInstance();
 			currentEl.setPath(parent.getPath());
 			currentEl.setCardinality(schemaElement.getMinOccurs(), schemaElement.getMaxOccurs());
 			parent.addItem(currentEl);
