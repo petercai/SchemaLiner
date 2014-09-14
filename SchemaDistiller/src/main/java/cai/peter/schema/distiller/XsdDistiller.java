@@ -20,17 +20,67 @@ import org.exolab.castor.xml.schema.SimpleType;
 import org.exolab.castor.xml.schema.Wildcard;
 import org.exolab.castor.xml.schema.XMLType;
 
+import cai.peter.aop.ToStringMethodInterceptor;
 import cai.peter.schema.model.xattribute;
 import cai.peter.schema.model.xelement;
 import cai.peter.schema.model.xgroup;
 import cai.peter.schema.model.xnode;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.matcher.Matchers;
+
 public class XsdDistiller
 {
 
+	private Injector	injector;
+
+
+	public XsdDistiller()
+	{
+		super();
+		injector = Guice.createInjector(new AbstractModule()
+		{
+			@Override
+			protected void configure()
+			{
+				try
+				{
+					bindInterceptor( Matchers.only(xelement.class),
+							Matchers.only(xelement.class.getDeclaredMethod("toString", null)), 
+							new ToStringMethodInterceptor());
+				}
+				catch (NoSuchMethodException e)
+				{
+					e.printStackTrace();
+				}
+				catch (SecurityException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	xelement newInstanceWithInjection(String name)
+	{
+		xelement e = injector.getInstance(xelement.class);
+		e.setName(name);
+		return e;
+	}
+
+	xelement newInstanceWithInjection(String path, String name)
+	{
+		xelement e = injector.getInstance(xelement.class);
+		e.setPath(path);
+		e.setName(name);
+		return e;
+	}
+	
 	public xelement processElement(final ElementDecl elementDecl, final String path) throws Exception
 	{
-		xelement node = new xelement(elementDecl.getName());
+		xelement node = newInstanceWithInjection(elementDecl.getName());
 		node.setPath(path);
 		node.setCardinality(elementDecl.getMinOccurs(),elementDecl.getMaxOccurs());
 		XMLType typeReference = elementDecl.getType();
@@ -177,7 +227,7 @@ public class XsdDistiller
 
 	xnode processWildard(Wildcard content)
 	{
-		xelement result = new xelement(content.getProcessContent());
+		xelement result = newInstanceWithInjection(content.getProcessContent());
 		result.setCardinality(content.getMinOccurs(),
 		                      content.getMaxOccurs());
 		return result;

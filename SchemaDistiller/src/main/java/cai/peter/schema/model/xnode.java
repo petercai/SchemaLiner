@@ -44,4 +44,10 @@ public abstract class xnode
 	{
 		this.path = path;
 	}
+
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
 }

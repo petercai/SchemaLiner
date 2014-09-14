@@ -18,6 +18,12 @@ public class xelement extends xnode
 	protected String	ns;
 	protected String	cardinality	= "";
 	protected List<xattribute>	attributes	= new ArrayList<xattribute>();
+	
+	public xelement()
+	{
+		super(null);
+	}
+	
 	public xelement(String name)
 	{
 		super(name);
