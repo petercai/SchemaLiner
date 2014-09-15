@@ -103,6 +103,14 @@
         		<artifactId>spring-context</artifactId>
         		<groupId>org.springframework</groupId>
         	</exclusion>
+        	<exclusion>
+        		<artifactId>stax-api</artifactId>
+        		<groupId>javax.xml.stream</groupId>
+        	</exclusion>
+        	<exclusion>
+        		<artifactId>stax</artifactId>
+        		<groupId>stax</groupId>
+        	</exclusion>
         </exclusions>
     </dependency>
     <dependency>
@@ -114,6 +122,64 @@
     	<groupId>org.apache.axis2</groupId>
     	<artifactId>axis2-kernel</artifactId>
     	<version>1.6.2</version>
+    	<exclusions>
+    		<exclusion>
+    			<artifactId>woden-api</artifactId>
+    			<groupId>org.apache.woden</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>woden-impl-dom</artifactId>
+    			<groupId>org.apache.woden</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>commons-fileupload</artifactId>
+    			<groupId>commons-fileupload</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>commons-httpclient</artifactId>
+    			<groupId>commons-httpclient</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>geronimo-jta_1.1_spec</artifactId>
+    			<groupId>org.apache.geronimo.specs</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+    			<groupId>org.apache.geronimo.specs</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>servlet-api</artifactId>
+    			<groupId>javax.servlet</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>geronimo-stax-api_1.0_spec</artifactId>
+    			<groupId>org.apache.geronimo.specs</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>geronimo-javamail_1.4_spec</artifactId>
+    			<groupId>org.apache.geronimo.specs</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>geronimo-activation_1.1_spec</artifactId>
+    			<groupId>org.apache.geronimo.specs</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>apache-mime4j-core</artifactId>
+    			<groupId>org.apache.james</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>wstx-asl</artifactId>
+    			<groupId>org.codehaus.woodstox</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>jsr311-api</artifactId>
+    			<groupId>javax.ws.rs</groupId>
+    		</exclusion>
+    		<exclusion>
+    			<artifactId>jaxen</artifactId>
+    			<groupId>jaxen</groupId>
+    		</exclusion>
+    	</exclusions>
     </dependency>
     <dependency>
     	<groupId>commons-cli</groupId>
