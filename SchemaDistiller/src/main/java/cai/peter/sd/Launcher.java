@@ -30,7 +30,6 @@ public class Launcher
 		{
 			CommandLine cl = parser.parse(options, args);
 			String filename = cl.getOptionValue("f");
-			SchemaTransformer.transform(new File(filename));
 			if( cl.hasOption("t"))
 			{
 				XdOption.getInstance().opt = XdOption.Option.SHOW_TYPEINFO;
@@ -44,10 +43,7 @@ public class Launcher
 			{
 				XdOption.getInstance().showMultiFile = true;
 			}
-			else
-			{
-				help(options);
-			}
+			SchemaTransformer.transform(new File(filename));
 		}
 		catch (ParseException e)
 		{
