@@ -1,56 +1,109 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html lang="en"><head>
+
+
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <meta name="description" content="Schemadistiller : ">
-  <link rel="stylesheet" type="text/css" media="screen"
-  href="stylesheets/stylesheet.css">
-  <title>Schemadistiller</title>
-</head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Schema Distiller">
+  <meta name="author" content="Peter Cai"><!-- Note there is no responsive meta tag here -->
+  
+  <link rel="icon" href="favicon.ico"><title>Schema Distiller</title><!-- Bootstrap core CSS -->
+  
+  
+  <link href="css/bootstrap.css" rel="stylesheet"><!-- Custom styles for this template -->
+  
+  <link href="css/non-responsive.css" rel="stylesheet"></head><body>
+<!-- Fixed navbar -->
 
-<body>
-<!-- HEADER -->
+<div class="navbar navbar-default navbar-fixed-top">
 
-<div id="header_wrap" class="outer">
-<header class=inner><a id="forkme_banner"
-href="https://github.com/petercai/SchemaDistiller">View on GitHub</a> 
+<div class="container">
 
-<h1 id="project_title">SchemaDistiller</h1>
+<div class="navbar-header">
+<button type="button" class="navbar-toggle"><span class="sr-only">Toggle
+navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+<span class="icon-bar"></span> </button> <a class="navbar-brand" href="#">Schema Distiller</a> </div>
 
-<h2 id="project_tagline"></h2>
-</header></div>
-<!-- MAIN CONTENT -->
+<div class="navbar-collapse collapse">
+<ul class="nav navbar-nav">
+  <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Introduce<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#xsd">Transform XSD</a><br>
+</li>
+                <li><a href="#wsdl">Transform WSDL</a><br>
+</li>
+              </ul>
+            </li>
+  <li><a href="#download">Download</a></li>
+  <li><a href="#run">How to run</a></li>
 
-<div id="main_content_wrap" class="outer">
-<section id=main_content class=inner>
+<!--   <li><a href="#bug">Report a bug</a></li>
+  <li><a href="#contact">Contact</a></li>
+ -->  
+  <li><a href="https://github.com/petercai/SchemaDistiller" target="_blank">Github</a></li>
+</ul>
+</div>
+<!--/.nav-collapse -->
+</div>
+</div>
+
+<div class="container">
+<div class="page-header">
+<h1>Schema Distiller</h1>
+
+<p class="lead">A handy tool transforms XML Schema(XSD) and WSDL to xpath-like
+plain text file. It represents the each XML Schema element in xpath, which is
+much closer to its XML and easier to be understanded, reviewed or even
+compared. The goal of this tool is to assist SOA/Web Service developer or
+designer to get the whole picture of a complex WSDL/XSD service contract
+definition quickly.</p>
+</div>
+
+<a name="xsd"></a>
+<div style="min-height: 50px;"></div>
+<h3>Transform XML Schema(XSD)</h3>
+<pre><code>&lt;xs:element name="AddRequest"&gt;<br>	&lt;xs:complexType&gt;<br>		&lt;xs:sequence&gt;<br>			&lt;xs:element name="ParameterOne" type="xs:int" minOccurs="1" maxOccurs="1"/&gt;<br>			&lt;xs:element name="Parameter2" minOccurs="1" maxOccurs="1"&gt;<br>				&lt;xs:simpleType&gt;<br>					&lt;xs:restriction base="xs:int"&gt;<br>						&lt;xs:totalDigits value="8"/&gt;<br>						&lt;xs:fractionDigits value="2"/&gt;<br>					&lt;/xs:restriction&gt;<br>				&lt;/xs:simpleType&gt;<br>			&lt;/xs:element&gt;<br>			&lt;xs:element name="ParameterTwo" type="xs:string" minOccurs="1" maxOccurs="1"/&gt;<br>			&lt;xs:element name="Parameter3" type="xs:string" minOccurs="0" maxOccurs="1"/&gt;<br>			&lt;xs:element name="Parameter4" minOccurs="1" maxOccurs="1"&gt;<br>				&lt;xs:simpleType&gt;<br>					&lt;xs:restriction base="xs:string"&gt;<br>						&lt;xs:minLength value="2"/&gt;<br>						&lt;xs:maxLength value="5"/&gt;<br>					&lt;/xs:restriction&gt;<br>				&lt;/xs:simpleType&gt;<br>			&lt;/xs:element&gt;<br>		&lt;/xs:sequence&gt;<br>	&lt;/xs:complexType&gt;<br>&lt;/xs:element&gt;<br></code></pre>
+
+<pre><code>/AddRequest<br>/AddRequest/ParameterOne:int<br>/AddRequest/Parameter2:int[8.2]<br>/AddRequest/ParameterTwo:string<br>/AddRequest/Parameter3?:string<br>/AddRequest/Parameter4:string[2.5]<br></code></pre>
+<a name="wsdl"></a>
+<div style="min-height: 50px;"></div>
+<h3>WSDL to plain text</h3>
+
+<pre><code>&lt;wsdl:definitions&gt;<br>  &lt;wsdl:types&gt;<br>	&lt;xs:schema xmlns:ns="http://axisversion.sample/xsd" attributeFormDefault="qualified"<br>			   elementFormDefault="unqualified" targetNamespace="http://axisversion.sample/xsd"&gt;<br>	  &lt;xs:element name="ExceptionFault"&gt;<br>		&lt;xs:complexType&gt;<br>		  &lt;xs:sequence&gt;<br>			&lt;xs:element minOccurs="0" name="Exception" nillable="true"<br>						type="xs:anyType"/&gt;<br>		  &lt;/xs:sequence&gt;<br>		&lt;/xs:complexType&gt;<br>	  &lt;/xs:element&gt;<br>	  &lt;xs:element name="getVersionResponse"&gt;<br>		&lt;xs:complexType&gt;<br>		  &lt;xs:sequence&gt;<br>			&lt;xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/&gt;<br>		  &lt;/xs:sequence&gt;<br>		&lt;/xs:complexType&gt;<br>	  &lt;/xs:element&gt;<br>	&lt;/xs:schema&gt;<br>  &lt;/wsdl:types&gt;<br>  &lt;wsdl:message name="getVersionRequest"/&gt;<br>  &lt;wsdl:message name="getVersionResponse"&gt;<br>	&lt;wsdl:part name="parameters" element="ns0:getVersionResponse"/&gt;<br>  &lt;/wsdl:message&gt;<br>  &lt;wsdl:message name="getVersionFault"&gt;<br>	&lt;wsdl:part name="parameters" element="ns0:ExceptionFault"/&gt;<br>  &lt;/wsdl:message&gt;<br>  &lt;wsdl:portType name="VersionPortType"&gt;<br>	&lt;wsdl:operation name="getVersion"&gt;<br>	  &lt;wsdl:input message="ns0:getVersionRequest" wsaw:Action="urn:getVersion"/&gt;<br>	  &lt;wsdl:output message="ns0:getVersionResponse" wsaw:Action="urn:getVersionResponse"/&gt;<br>	  &lt;wsdl:fault message="ns0:getVersionFault" name="getVersionFault"<br>				  wsaw:Action="urn:getVersionFault"/&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="foo-bar"&gt;<br>	  &lt;wsdl:input message="getVersionRequest"/&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="Foo-ba.r2"&gt;<br>	  &lt;wsdl:input message="getVersionRequest"/&gt;<br>	&lt;/wsdl:operation&gt;<br>  &lt;/wsdl:portType&gt;<br>  &lt;wsdl:binding name="VersionSOAP11Binding" type="ns0:VersionPortType"&gt;<br>	&lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/&gt;<br>	&lt;wsdl:operation name="getVersion"&gt;<br>	  &lt;soap:operation soapAction="urn:getVersion" style="document"/&gt;<br>	  &lt;wsdl:input&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:input&gt;<br>	  &lt;wsdl:output&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:output&gt;<br>	  &lt;wsdl:fault name="getVersionFault"&gt;<br>		&lt;soap:fault use="literal" name="getVersionFault"/&gt;<br>	  &lt;/wsdl:fault&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="foo-bar"&gt;<br>	  &lt;soap:operation soapAction="urn:foo-bar" style="document"/&gt;<br>	  &lt;wsdl:input&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:input&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="Foo-ba.r2"&gt;<br>	  &lt;soap:operation soapAction="urn:foo-bar" style="document"/&gt;<br>	  &lt;wsdl:input&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:input&gt;<br>	&lt;/wsdl:operation&gt;<br>  &lt;/wsdl:binding&gt;<br>&lt;/wsdl:definitions&gt;<br></code></pre>
+<pre><code>/PortType:VersionPortType<br>/Operation:getVersion<br>/Operation:getVersion/Input:getVersionRequest<br>/Operation:getVersion/Output:getVersionResponse<br>/Operation:getVersion/Output:getVersionResponse/getVersionResponse<br>/Operation:getVersion/Output:getVersionResponse/getVersionResponse/return?:string<br>/Operation:getVersion/Fault:getVersionFault<br>/Operation:getVersion/Fault:getVersionFault/ExceptionFault<br>/Operation:getVersion/Fault:getVersionFault/ExceptionFault/Exception?:anyType<br>/Operation:foo-bar<br>/Operation:foo-bar/Input:getVersionRequest<br>/Operation:Foo-ba.r2<br>/Operation:Foo-ba.r2/Input:getVersionRequest<br></code></pre>
+
+<a name="download"></a>
+<div style="min-height: 50px;"></div>
 <h3>Download</h3>
+<ul>
+    <li><a href="dist/xd.exe" title="Windows download">Windows download</a></li>
+    <li><a href="dist/xd.jar" title="Cross-platform download">Cross-platform download</a></li>
+</ul> 
 
-<p><a href="dist/xd.jar">here</a></p>
-
-<h3>Run</h3>
-
-<p>usage: java -jar xd.jar -f &lt;filen_ame|folde_rname&gt; [options]</p>
-
-<p style="margin-left:2em;line-height:1em;text-align:justify;">-c show
-elements' Cardinality information</p>
-
-<p style="margin-left:2em;line-height:1em;text-align:justify;">-f &lt;arg&gt;
-File name(.xsd|.wsdl) or Folder to transfrom</p>
-
-<p style="margin-left:2em;line-height:1em;text-align:justify;">-t show
-elements' Type information</p>
+<a name="run"></a>
+<div style="min-height: 50px;"></div>
+<h3>How to run</h3>
+<p>Windows:</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 40px;">usage: xd.exe -f &lt;filen_ame|folde_rname&gt; [options]</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 5em; line-height: 1em; text-align: justify;">-c show elements' Cardinality information</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 5em; line-height: 1em; text-align: justify;">-f &lt;arg&gt; File name(.xsd|.wsdl) or Folder to transfrom</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 5em; line-height: 1em; text-align: justify;">-t show elements' Type information</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; line-height: 1em; text-align: justify;">Other OS:</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 40px;">usage: java -jar xd.jar -f &lt;filen_ame|folde_rname&gt; [options]</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 5em; line-height: 1em; text-align: justify;">-c show elements' Cardinality information</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 5em; line-height: 1em; text-align: justify;">-f &lt;arg&gt; File name(.xsd|.wsdl) or Folder to transfrom</p>
+<p style="color: rgb(0, 0, 0); font-family: 'Times New Roman'; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; margin-left: 5em; line-height: 1em; text-align: justify;">-t show elements' Type information</p>
 
 <p></p>
-</section></div>
-<!-- FOOTER -->
 
-<div id="footer_wrap" class="outer">
-<footer class=inner>
-<p class="copyright">SchemaDistiller maintained by <a
-href="https://github.com/petercai">Peter Cai</a></p>
-
-<p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-</footer></div>
-</body>
-</html>
+</div>
+<!-- /container -->
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">
+</script>
+<script type="text/javascript" src="js/bootstrap.min.js">
+</script>
+</body></html>
