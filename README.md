@@ -4,6 +4,10 @@ Intro
 -----------
 SchemaDistiller is a handy tool to transform XML Schema(XSD) and WSDL to xpath-like plain text file. It represents the XML Schema's elements and their content in xpath format, which is closer to the XML that Schema described. It can be used to understand, review or even compare XML Schema or WSDL file. With the assist of this tool, SOA/Web Service developer or designer can quickly get the whole picture of a complex WSDL/XSD service contract definition. 
 
+Download
+----------------
+Download it [here](http://petercai.github.io/SchemaDistiller/)
+
 Features
 -----------
 ###1. Transform XML Schema(XSD) to plain text
@@ -137,6 +141,3 @@ XPath-style plain text:
 	/Operation:Foo-ba.r2
 	/Operation:Foo-ba.r2/Input:getVersionRequest
 	
-Download
-----------------
-[here](http://petercai.github.io/SchemaDistiller/)
