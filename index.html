@@ -27,17 +27,14 @@ navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span>
 <div class="navbar-collapse collapse">
 <ul class="nav navbar-nav">
   <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Introduce<span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="#xsd">Transform XSD</a><br>
-</li>
-                <li><a href="#wsdl">Transform WSDL</a><br>
-</li>
-              </ul>
-            </li>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Introduce<span class="caret"></span></a>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="#xsd">Transform XSD</a></li>
+      <li><a href="#wsdl">Transform WSDL</a></li>
+    </ul>
+  </li>
   <li><a href="#download">Download</a></li>
   <li><a href="#run">How to run</a></li>
-
 <!--   <li><a href="#bug">Report a bug</a></li>
   <li><a href="#contact">Contact</a></li>
  -->  
@@ -63,15 +60,128 @@ definition quickly.</p>
 <a name="xsd"></a>
 <div style="min-height: 50px;"></div>
 <h3>Transform XML Schema(XSD)</h3>
-<pre><code>&lt;xs:element name="AddRequest"&gt;<br>	&lt;xs:complexType&gt;<br>		&lt;xs:sequence&gt;<br>			&lt;xs:element name="ParameterOne" type="xs:int" minOccurs="1" maxOccurs="1"/&gt;<br>			&lt;xs:element name="Parameter2" minOccurs="1" maxOccurs="1"&gt;<br>				&lt;xs:simpleType&gt;<br>					&lt;xs:restriction base="xs:int"&gt;<br>						&lt;xs:totalDigits value="8"/&gt;<br>						&lt;xs:fractionDigits value="2"/&gt;<br>					&lt;/xs:restriction&gt;<br>				&lt;/xs:simpleType&gt;<br>			&lt;/xs:element&gt;<br>			&lt;xs:element name="ParameterTwo" type="xs:string" minOccurs="1" maxOccurs="1"/&gt;<br>			&lt;xs:element name="Parameter3" type="xs:string" minOccurs="0" maxOccurs="1"/&gt;<br>			&lt;xs:element name="Parameter4" minOccurs="1" maxOccurs="1"&gt;<br>				&lt;xs:simpleType&gt;<br>					&lt;xs:restriction base="xs:string"&gt;<br>						&lt;xs:minLength value="2"/&gt;<br>						&lt;xs:maxLength value="5"/&gt;<br>					&lt;/xs:restriction&gt;<br>				&lt;/xs:simpleType&gt;<br>			&lt;/xs:element&gt;<br>		&lt;/xs:sequence&gt;<br>	&lt;/xs:complexType&gt;<br>&lt;/xs:element&gt;<br></code></pre>
-
-<pre><code>/AddRequest<br>/AddRequest/ParameterOne:int<br>/AddRequest/Parameter2:int[8.2]<br>/AddRequest/ParameterTwo:string<br>/AddRequest/Parameter3?:string<br>/AddRequest/Parameter4:string[2.5]<br></code></pre>
+<pre><code>&lt;xs:element name=&quot;AddRequest&quot;&gt;
+  &lt;xs:complexType&gt;
+    &lt;xs:sequence&gt;
+      &lt;xs:element name=&quot;ParameterOne&quot; type=&quot;xs:int&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+      &lt;xs:element name=&quot;Parameter2&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;&gt;
+        &lt;xs:simpleType&gt;
+          &lt;xs:restriction base=&quot;xs:int&quot;&gt;
+            &lt;xs:totalDigits value=&quot;8&quot;/&gt;
+            &lt;xs:fractionDigits value=&quot;2&quot;/&gt;
+          &lt;/xs:restriction&gt;
+        &lt;/xs:simpleType&gt;
+      &lt;/xs:element&gt;
+      &lt;xs:element name=&quot;ParameterTwo&quot; type=&quot;xs:string&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;/&gt;
+      &lt;xs:element name=&quot;Parameter3&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;1&quot;/&gt;
+      &lt;xs:element name=&quot;Parameter4&quot; minOccurs=&quot;1&quot; maxOccurs=&quot;1&quot;&gt;
+        &lt;xs:simpleType&gt;
+          &lt;xs:restriction base=&quot;xs:string&quot;&gt;
+            &lt;xs:minLength value=&quot;2&quot;/&gt;
+            &lt;xs:maxLength value=&quot;5&quot;/&gt;
+          &lt;/xs:restriction&gt;
+        &lt;/xs:simpleType&gt;
+      &lt;/xs:element&gt;
+    &lt;/xs:sequence&gt;
+  &lt;/xs:complexType&gt;
+&lt;/xs:element&gt;
+</code></pre>
+<pre><code>/AddRequest
+/AddRequest/ParameterOne:int
+/AddRequest/Parameter2:int[8.2]
+/AddRequest/ParameterTwo:string
+/AddRequest/Parameter3?:string
+/AddRequest/Parameter4:string[2.5]
+</code></pre>
 <a name="wsdl"></a>
 <div style="min-height: 50px;"></div>
 <h3>WSDL to plain text</h3>
 
-<pre><code>&lt;wsdl:definitions&gt;<br>  &lt;wsdl:types&gt;<br>	&lt;xs:schema xmlns:ns="http://axisversion.sample/xsd" attributeFormDefault="qualified"<br>			   elementFormDefault="unqualified" targetNamespace="http://axisversion.sample/xsd"&gt;<br>	  &lt;xs:element name="ExceptionFault"&gt;<br>		&lt;xs:complexType&gt;<br>		  &lt;xs:sequence&gt;<br>			&lt;xs:element minOccurs="0" name="Exception" nillable="true"<br>						type="xs:anyType"/&gt;<br>		  &lt;/xs:sequence&gt;<br>		&lt;/xs:complexType&gt;<br>	  &lt;/xs:element&gt;<br>	  &lt;xs:element name="getVersionResponse"&gt;<br>		&lt;xs:complexType&gt;<br>		  &lt;xs:sequence&gt;<br>			&lt;xs:element minOccurs="0" name="return" nillable="true" type="xs:string"/&gt;<br>		  &lt;/xs:sequence&gt;<br>		&lt;/xs:complexType&gt;<br>	  &lt;/xs:element&gt;<br>	&lt;/xs:schema&gt;<br>  &lt;/wsdl:types&gt;<br>  &lt;wsdl:message name="getVersionRequest"/&gt;<br>  &lt;wsdl:message name="getVersionResponse"&gt;<br>	&lt;wsdl:part name="parameters" element="ns0:getVersionResponse"/&gt;<br>  &lt;/wsdl:message&gt;<br>  &lt;wsdl:message name="getVersionFault"&gt;<br>	&lt;wsdl:part name="parameters" element="ns0:ExceptionFault"/&gt;<br>  &lt;/wsdl:message&gt;<br>  &lt;wsdl:portType name="VersionPortType"&gt;<br>	&lt;wsdl:operation name="getVersion"&gt;<br>	  &lt;wsdl:input message="ns0:getVersionRequest" wsaw:Action="urn:getVersion"/&gt;<br>	  &lt;wsdl:output message="ns0:getVersionResponse" wsaw:Action="urn:getVersionResponse"/&gt;<br>	  &lt;wsdl:fault message="ns0:getVersionFault" name="getVersionFault"<br>				  wsaw:Action="urn:getVersionFault"/&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="foo-bar"&gt;<br>	  &lt;wsdl:input message="getVersionRequest"/&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="Foo-ba.r2"&gt;<br>	  &lt;wsdl:input message="getVersionRequest"/&gt;<br>	&lt;/wsdl:operation&gt;<br>  &lt;/wsdl:portType&gt;<br>  &lt;wsdl:binding name="VersionSOAP11Binding" type="ns0:VersionPortType"&gt;<br>	&lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/&gt;<br>	&lt;wsdl:operation name="getVersion"&gt;<br>	  &lt;soap:operation soapAction="urn:getVersion" style="document"/&gt;<br>	  &lt;wsdl:input&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:input&gt;<br>	  &lt;wsdl:output&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:output&gt;<br>	  &lt;wsdl:fault name="getVersionFault"&gt;<br>		&lt;soap:fault use="literal" name="getVersionFault"/&gt;<br>	  &lt;/wsdl:fault&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="foo-bar"&gt;<br>	  &lt;soap:operation soapAction="urn:foo-bar" style="document"/&gt;<br>	  &lt;wsdl:input&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:input&gt;<br>	&lt;/wsdl:operation&gt;<br>	&lt;wsdl:operation name="Foo-ba.r2"&gt;<br>	  &lt;soap:operation soapAction="urn:foo-bar" style="document"/&gt;<br>	  &lt;wsdl:input&gt;<br>		&lt;soap:body use="literal"/&gt;<br>	  &lt;/wsdl:input&gt;<br>	&lt;/wsdl:operation&gt;<br>  &lt;/wsdl:binding&gt;<br>&lt;/wsdl:definitions&gt;<br></code></pre>
-<pre><code>/PortType:VersionPortType<br>/Operation:getVersion<br>/Operation:getVersion/Input:getVersionRequest<br>/Operation:getVersion/Output:getVersionResponse<br>/Operation:getVersion/Output:getVersionResponse/getVersionResponse<br>/Operation:getVersion/Output:getVersionResponse/getVersionResponse/return?:string<br>/Operation:getVersion/Fault:getVersionFault<br>/Operation:getVersion/Fault:getVersionFault/ExceptionFault<br>/Operation:getVersion/Fault:getVersionFault/ExceptionFault/Exception?:anyType<br>/Operation:foo-bar<br>/Operation:foo-bar/Input:getVersionRequest<br>/Operation:Foo-ba.r2<br>/Operation:Foo-ba.r2/Input:getVersionRequest<br></code></pre>
+<pre><code>&lt;wsdl:definitions&gt;
+  &lt;wsdl:types&gt;
+  &lt;xs:schema xmlns:ns=&quot;http://axisversion.sample/xsd&quot; attributeFormDefault=&quot;qualified&quot;
+         elementFormDefault=&quot;unqualified&quot; targetNamespace=&quot;http://axisversion.sample/xsd&quot;&gt;
+    &lt;xs:element name=&quot;ExceptionFault&quot;&gt;
+    &lt;xs:complexType&gt;
+      &lt;xs:sequence&gt;
+      &lt;xs:element minOccurs=&quot;0&quot; name=&quot;Exception&quot; nillable=&quot;true&quot;
+            type=&quot;xs:anyType&quot;/&gt;
+      &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+    &lt;/xs:element&gt;
+    &lt;xs:element name=&quot;getVersionResponse&quot;&gt;
+    &lt;xs:complexType&gt;
+      &lt;xs:sequence&gt;
+      &lt;xs:element minOccurs=&quot;0&quot; name=&quot;return&quot; nillable=&quot;true&quot; type=&quot;xs:string&quot;/&gt;
+      &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+    &lt;/xs:element&gt;
+  &lt;/xs:schema&gt;
+  &lt;/wsdl:types&gt;
+  &lt;wsdl:message name=&quot;getVersionRequest&quot;/&gt;
+  &lt;wsdl:message name=&quot;getVersionResponse&quot;&gt;
+  &lt;wsdl:part name=&quot;parameters&quot; element=&quot;ns0:getVersionResponse&quot;/&gt;
+  &lt;/wsdl:message&gt;
+  &lt;wsdl:message name=&quot;getVersionFault&quot;&gt;
+  &lt;wsdl:part name=&quot;parameters&quot; element=&quot;ns0:ExceptionFault&quot;/&gt;
+  &lt;/wsdl:message&gt;
+  &lt;wsdl:portType name=&quot;VersionPortType&quot;&gt;
+  &lt;wsdl:operation name=&quot;getVersion&quot;&gt;
+    &lt;wsdl:input message=&quot;ns0:getVersionRequest&quot; wsaw:Action=&quot;urn:getVersion&quot;/&gt;
+    &lt;wsdl:output message=&quot;ns0:getVersionResponse&quot; wsaw:Action=&quot;urn:getVersionResponse&quot;/&gt;
+    &lt;wsdl:fault message=&quot;ns0:getVersionFault&quot; name=&quot;getVersionFault&quot;
+          wsaw:Action=&quot;urn:getVersionFault&quot;/&gt;
+  &lt;/wsdl:operation&gt;
+  &lt;wsdl:operation name=&quot;foo-bar&quot;&gt;
+    &lt;wsdl:input message=&quot;getVersionRequest&quot;/&gt;
+  &lt;/wsdl:operation&gt;
+  &lt;wsdl:operation name=&quot;Foo-ba.r2&quot;&gt;
+    &lt;wsdl:input message=&quot;getVersionRequest&quot;/&gt;
+  &lt;/wsdl:operation&gt;
+  &lt;/wsdl:portType&gt;
+  &lt;wsdl:binding name=&quot;VersionSOAP11Binding&quot; type=&quot;ns0:VersionPortType&quot;&gt;
+  &lt;soap:binding transport=&quot;http://schemas.xmlsoap.org/soap/http&quot; style=&quot;document&quot;/&gt;
+  &lt;wsdl:operation name=&quot;getVersion&quot;&gt;
+    &lt;soap:operation soapAction=&quot;urn:getVersion&quot; style=&quot;document&quot;/&gt;
+    &lt;wsdl:input&gt;
+    &lt;soap:body use=&quot;literal&quot;/&gt;
+    &lt;/wsdl:input&gt;
+    &lt;wsdl:output&gt;
+    &lt;soap:body use=&quot;literal&quot;/&gt;
+    &lt;/wsdl:output&gt;
+    &lt;wsdl:fault name=&quot;getVersionFault&quot;&gt;
+    &lt;soap:fault use=&quot;literal&quot; name=&quot;getVersionFault&quot;/&gt;
+    &lt;/wsdl:fault&gt;
+  &lt;/wsdl:operation&gt;
+  &lt;wsdl:operation name=&quot;foo-bar&quot;&gt;
+    &lt;soap:operation soapAction=&quot;urn:foo-bar&quot; style=&quot;document&quot;/&gt;
+    &lt;wsdl:input&gt;
+    &lt;soap:body use=&quot;literal&quot;/&gt;
+    &lt;/wsdl:input&gt;
+  &lt;/wsdl:operation&gt;
+  &lt;wsdl:operation name=&quot;Foo-ba.r2&quot;&gt;
+    &lt;soap:operation soapAction=&quot;urn:foo-bar&quot; style=&quot;document&quot;/&gt;
+    &lt;wsdl:input&gt;
+    &lt;soap:body use=&quot;literal&quot;/&gt;
+    &lt;/wsdl:input&gt;
+  &lt;/wsdl:operation&gt;
+  &lt;/wsdl:binding&gt;
+&lt;/wsdl:definitions&gt;
+</code></pre>
+<pre><code>/PortType:VersionPortType
+/Operation:getVersion
+/Operation:getVersion/Input:getVersionRequest
+/Operation:getVersion/Output:getVersionResponse
+/Operation:getVersion/Output:getVersionResponse/getVersionResponse
+/Operation:getVersion/Output:getVersionResponse/getVersionResponse/return?:string
+/Operation:getVersion/Fault:getVersionFault
+/Operation:getVersion/Fault:getVersionFault/ExceptionFault
+/Operation:getVersion/Fault:getVersionFault/ExceptionFault/Exception?:anyType
+/Operation:foo-bar
+/Operation:foo-bar/Input:getVersionRequest
+/Operation:Foo-ba.r2
+/Operation:Foo-ba.r2/Input:getVersionRequest
+</code></pre>
 
 <a name="download"></a>
 <div style="min-height: 50px;"></div>
