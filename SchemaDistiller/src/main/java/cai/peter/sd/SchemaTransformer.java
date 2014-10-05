@@ -113,11 +113,14 @@ public class SchemaTransformer
 		for( xnode node : elements)
 		{
 			allInOneFile.transform(node);
-			String name = node.getName();
-			File outputFile = new File(xsdFile.toString()+"."+name);
-			SchemaTransformer elementFile = new SchemaTransformer((outputFile));
-			elementFile.transform(node);
-			elementFile.close();
+			if( XdOption.getInstance().showMultiFile )
+			{
+				String name = node.getName();
+				File outputFile = new File(xsdFile.toString()+"."+name);
+				SchemaTransformer elementFile = new SchemaTransformer((outputFile));
+				elementFile.transform(node);
+				elementFile.close();
+			}
 		}
 		allInOneFile.close();
 	}
@@ -146,12 +149,15 @@ public class SchemaTransformer
 		for( xelement node : elements)
 		{
 			allInOneFile.transform(node);
-			String ns = node.getNs();
-			String name = node.getName();
-			File outputFile = new File(wsdlFile.toString()+"."+ns+"."+name);
-			SchemaTransformer elementFile = new SchemaTransformer((outputFile));
-			elementFile.transform(node);
-			elementFile.close();
+			if( XdOption.getInstance().showMultiFile )
+			{
+				String ns = node.getNs();
+				String name = node.getName();
+				File outputFile = new File(wsdlFile.toString()+"."+ns+"."+name);
+				SchemaTransformer elementFile = new SchemaTransformer((outputFile));
+				elementFile.transform(node);
+				elementFile.close();
+			}
 		}
 		allInOneFile.close();
 	}
